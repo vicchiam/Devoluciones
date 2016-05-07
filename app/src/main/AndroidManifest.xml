@@ -26,8 +26,11 @@
         </activity>
         <activity
             android:name=".PreferenciasBarActivity"
-            android:label="@string/preferences">
-        </activity>
+            android:label="@string/preferences"></activity>
+        <activity
+            android:name=".DevolucionActivity"
+            android:label="@string/title_activity_devolucion"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

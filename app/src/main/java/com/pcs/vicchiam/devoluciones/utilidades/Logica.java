@@ -47,7 +47,7 @@ public class Logica implements RespuestaServidor {
         this.activity=activity;
         comprobarRecursos();
         inicializarDatabase();
-        obtenerClientes();
+        obtenerClientes(true);
     }
 
     public void inicializarDatabase(){
@@ -117,20 +117,21 @@ public class Logica implements RespuestaServidor {
 
     /**
      * Try get of the server all clients according to the frecuency preferences
+     * @param comprobar If is TRUE check date preferences else always get customers
      */
-    public void obtenerClientes(){
+    public void obtenerClientes(boolean comprobar){
         //Get frecuency preference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         String frequencia=prefs.getString("frecuencia_actualizar_cliente","0");
 
         //Check if date in preferences is greater than now
-        String ultimaActualizacion=prefs.getString("ultima_actualizacion","01-01-2000");
-        String ahora=Utilidades.fechaCadena(new Date());
-        if(!frequencia.equals("0") && ahora.equals(ultimaActualizacion)){
-            return;
+        String ahora = Utilidades.fechaCadena(new Date());
+        if(comprobar) {
+            String ultimaActualizacion = prefs.getString("ultima_actualizacion", "01-01-2000");
+            if (!frequencia.equals("0") && ahora.equals(ultimaActualizacion)) {
+                return;
+            }
         }
-
-        Log.e("FECHA",ahora+" - "+ultimaActualizacion);
 
         //If now is greater than date in preferences update the date of preferences
         SharedPreferences.Editor editor=prefs.edit();
@@ -160,10 +161,14 @@ public class Logica implements RespuestaServidor {
         }
     }
 
-    private void procesarClientes(String clientes){
+    /**
+     * With a JSON of customers makes a database table of customers
+     * @param jsonClientes
+     */
+    private void procesarClientes(String jsonClientes){
         try {
             clienteDB.truncate();
-            JSONObject jsonObject=new JSONObject(clientes);
+            JSONObject jsonObject=new JSONObject(jsonClientes);
             JSONArray jsonArray=jsonObject.getJSONArray("clientes");
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jObj=jsonArray.getJSONObject(i);
