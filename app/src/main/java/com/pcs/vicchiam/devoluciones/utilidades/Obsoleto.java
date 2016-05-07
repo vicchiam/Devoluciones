@@ -1,4 +1,4 @@
-package com.pcs.vicchiam.devoluciones;
+package com.pcs.vicchiam.devoluciones.utilidades;
 
 /**
  * Created by vicch on 05/05/2016.
@@ -62,7 +62,7 @@ public class Obsoleto {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("operacion", "obtener_descripcion");
             hashMap.put("codigo", codigo);
-            Comunicacion comunicacion = new Comunicacion(this);
+            Conexion comunicacion = new Conexion(this);
             comunicacion.execute(hashMap);
         }
     }

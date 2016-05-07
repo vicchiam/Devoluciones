@@ -4,14 +4,19 @@
     <group android:checkableBehavior="all">
         <item
             android:id="@+id/navigation_item_1"
-            android:title="Menu1" />
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/home" />
+
         <item
             android:id="@+id/navigation_item_2"
-            android:title="Menu2" />
+            android:icon="@drawable/ic_sync_black_24dp"
+            android:title="@string/actualizar"/>
 
         <item
             android:id="@+id/navigation_item_3"
-            android:title="Menu3" />
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/settings"/>
+
     </group>
 
 </menu>

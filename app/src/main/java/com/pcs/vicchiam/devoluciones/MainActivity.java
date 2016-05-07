@@ -1,25 +1,33 @@
 package com.pcs.vicchiam.devoluciones;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
+
+import com.pcs.vicchiam.devoluciones.utilidades.Logica;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
+    private Logica logica;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeUI();
+
+        iniApp();
+
     }
 
     /*INICIALIZAR UI********************************************************************************/
@@ -35,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Show menu icon
         final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_navigation_menu);
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
         ab.setDisplayHomeAsUpEnabled(true);
     }
 
@@ -66,14 +74,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             menuItem.setChecked(true);
         }
-
         //Closing drawer on item click
         drawerLayout.closeDrawers();
         switch (menuItem.getItemId()) {
-            case R.id.navigation_item_1:
+            case R.id.navigation_item_1:{
                 break;
-            case R.id.navigation_item_2:
+            }
+            case R.id.navigation_item_2:{
+                this.logica.obtenerClientes();
                 break;
+            }
+            case R.id.navigation_item_3: {
+                Intent intent = new Intent(this, PreferenciasBarActivity.class);
+                startActivity(intent);
+                break;
+            }
         }
         return false;
     }
@@ -90,13 +105,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void onBackPressed(){
+        if(drawerLayout.isDrawerOpen(navigationView)){
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        }
+        else{
+            finish();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
     }
 
     /*MIS METODOS**********************************************************************************/
 
-
+    private void iniApp(){
+        logica=Logica.getInstance(this);
+        logica.comprobarRecursos();
+    }
 
 
 

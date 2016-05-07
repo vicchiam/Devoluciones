@@ -1,46 +1,59 @@
-package com.pcs.vicchiam.devoluciones;
+package com.pcs.vicchiam.devoluciones.utilidades;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.pcs.vicchiam.devoluciones.R;
+import com.pcs.vicchiam.devoluciones.interfaces.RespuestaServidor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Created by vicch on 05/05/2016.
+ * Created by vicchiam on 05/05/2016.
+ *
+ * Class task is crete connection with HTTP method POST with the server and get the response, in background *
  */
-public class Comunicacion extends AsyncTask<HashMap<String,String>,Void,String>{
+public class Conexion extends AsyncTask<HashMap<String,String>,Void,String>{
 
-    private final String RECURSO="http://172.16.0.173/Apps/android/devoluciones/repartidor.php";
-    private MainActivity padre;
+    private Activity activity;
+    private RespuestaServidor respuestaServidor;
+    private String recurso;
+    private int tipo;
 
     private ProgressDialog dialog;
 
-    public Comunicacion(MainActivity padre){
-        this.padre=padre;
-        dialog = new ProgressDialog(this.padre);
+    /**
+     * Constructor of class Conexion
+     * @param activity the parent activity
+     * @param respuestaServidor the class thet get the response, this must implement RespuestaServidor
+     * @param recurso the complete URL when the server get and response
+     * @param tipo the type of call to the server
+     */
+    public Conexion(Activity activity, RespuestaServidor respuestaServidor, String recurso, int tipo){
+        this.activity=activity;
+        this.respuestaServidor=respuestaServidor;
+        this.recurso=recurso;
+        this.tipo=tipo;
+        dialog = new ProgressDialog(this.activity);
     }
 
     @Override
     protected void onPreExecute() {
-        this.dialog.setMessage("Progress start");
+        this.dialog.setTitle(activity.getResources().getString(R.string.progress_title));
+        this.dialog.setMessage(activity.getResources().getString(R.string.progress_msj));
         this.dialog.show();
     }
 
@@ -52,22 +65,34 @@ public class Comunicacion extends AsyncTask<HashMap<String,String>,Void,String>{
             res=post(variables);
         } catch (IOException e) {
             e.printStackTrace();
+            return "error";
         }
         return res;
     }
 
     @Override
     protected void onPostExecute(final String respuesta){
-        Log.e("RESPUESTA",respuesta);
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        this.padre.respuesta("eyy",respuesta);
+        //The method of the interface RespuestaServidor, need type and response
+        if(respuesta.equals("error")){
+            this.respuestaServidor.respuesta(Utilidades.ERROR_CONEXION,"");
+        }
+        else {
+            this.respuestaServidor.respuesta(this.tipo, respuesta);
+        }
     }
 
+    /**
+     * Method that do the conection and recieve the response
+     * @param variables the POST variables that send to the server
+     * @return the response of the server
+     * @throws IOException
+     */
     public String post(HashMap<String,String> variables) throws IOException {
-        //Hacemos la conexion
-        URL url = new URL(RECURSO);
+        //Make the connection
+        URL url = new URL(this.recurso);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(15000);
         conn.setConnectTimeout(15000);
@@ -76,7 +101,7 @@ public class Comunicacion extends AsyncTask<HashMap<String,String>,Void,String>{
         conn.setDoOutput(true);
         conn.connect();
 
-        //Creo el post
+        //Make the POST
         StringBuilder data = new StringBuilder();
         for (Map.Entry<String, String> variable : variables.entrySet()) {
             data.append("&");
@@ -85,7 +110,7 @@ public class Comunicacion extends AsyncTask<HashMap<String,String>,Void,String>{
             data.append(URLEncoder.encode(variable.getValue(), "UTF-8"));
         }
 
-        //Envio el post
+        //Send POST
         OutputStream os = conn.getOutputStream();
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
         writer.write(data.toString());
@@ -93,7 +118,7 @@ public class Comunicacion extends AsyncTask<HashMap<String,String>,Void,String>{
         writer.close();
         os.close();
 
-        //Obtengo respuesta
+        //Get response
         String respuesta = "";
         int responseCode = conn.getResponseCode();
         if (responseCode == HttpsURLConnection.HTTP_OK) {
@@ -103,6 +128,9 @@ public class Comunicacion extends AsyncTask<HashMap<String,String>,Void,String>{
                 respuesta += line;
             }
             br.close();
+        }
+        else{
+            throw new IOException("Network error");
         }
         conn.disconnect();
         return respuesta;

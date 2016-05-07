@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Devoluciones</string>
+
+    <!-- PREFERENCIAS ************************************************************************** -->
+    <string name="preferences">Configuración</string>
+    <string name="pref_user">Usuario</string>
+    <string name="pref_wifi">Indica la red WIFI interna</string>
+    <string name="pref_wifi_title">Red WIFI</string>
+    <string name="pref_servidor_title">IP Servidor</string>
+    <string name="pref_servidor">Indica la IP del servidor</string>
+    <string name="pref_servicio_title">URL</string>
+    <string name="pref_servicio">Indica la URL del servicio</string>
+    <string name="pref_actualizar_title">Actualizar Cliente</string>
+    <string name="pref_actualizar">Frecuencia actualización Clientes</string>
+
+    <!-- MENU NAVIGATION************************************************************************ -->
+    <string name="home">Inicio</string>
+    <string name="settings">Configuración</string>
+    <string name="actualizar">Actualizar Clientes</string>
+
+    <!-- ALERTAS ******************************************************************************* -->
+    <string name="advertencia">Advertencia</string>
+    <string name="no_wifi_pref">No se ha indicado ninguna red Wifi, ve a configuración</string>
+    <string name="no_servidor_pref">No se ha indicado ningún servidor, ve a configuración</string>
+    <string name="no_servicio_pref">No se ha indicado ningún servicio, ve a configuración</string>
+    <string name="no_wifi_conn">No se ha podido conectar a la red Wifi indicada: %1$s</string>
+    <string name="conn_err">Error al conectar con el servidor intentelo más tarde</string>
+
+    <!-- PROGRESO ****************************************************************************** -->
+    <string name="progress_title">Espere</string>
+    <string name="progress_msj">Obteniendo Datos...</string>
+
 </resources>
