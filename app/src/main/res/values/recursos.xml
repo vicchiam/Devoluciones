@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wifi_defecto">PCS</string>
+    <string name="servidor_defecto">172.16.0.173</string>
+    <string name="servicio_defecto">Apps/android/devoluciones/repartidor.php</string>
+    <integer name="actualizacion_defecto">1</integer>
+</resources>

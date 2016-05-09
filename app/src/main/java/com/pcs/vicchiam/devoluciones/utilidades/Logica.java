@@ -1,6 +1,7 @@
 package com.pcs.vicchiam.devoluciones.utilidades;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +33,8 @@ public class Logica implements RespuestaServidor {
     private String recurso;
     private ClienteDB clienteDB;
 
+    ProgressDialog progressDialog;
+
     public static Logica getInstance(Activity activity){
         if(instancia==null){
             instancia=new Logica(activity);
@@ -45,7 +48,7 @@ public class Logica implements RespuestaServidor {
      */
     public Logica(Activity activity){
         this.activity=activity;
-        comprobarRecursos();
+        //comprobarRecursos();
         inicializarDatabase();
         obtenerClientes(true);
     }
@@ -60,9 +63,9 @@ public class Logica implements RespuestaServidor {
     public boolean comprobarRecursos(){
         //Get the preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        String miWifi=prefs.getString("ssid","");
-        String servidor=prefs.getString("servidor","");
-        String servicio=prefs.getString("servicio","");
+        String miWifi=prefs.getString("ssid",activity.getResources().getString(R.string.wifi_defecto));
+        String servidor=prefs.getString("servidor",activity.getResources().getString(R.string.servidor_defecto));
+        String servicio=prefs.getString("servicio",activity.getResources().getString(R.string.servicio_defecto));
 
         //Check if wifi preference is right
         if(miWifi.equals("")){
@@ -120,9 +123,11 @@ public class Logica implements RespuestaServidor {
      * @param comprobar If is TRUE check date preferences else always get customers
      */
     public void obtenerClientes(boolean comprobar){
+        comprobarRecursos();
+
         //Get frecuency preference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        String frequencia=prefs.getString("frecuencia_actualizar_cliente","0");
+        String frequencia=prefs.getString("frecuencia_actualizar_cliente",activity.getResources().getInteger(R.integer.actualizacion_defecto)+"");
 
         //Check if date in preferences is greater than now
         String ahora = Utilidades.fechaCadena(new Date());
@@ -141,6 +146,9 @@ public class Logica implements RespuestaServidor {
         //Update the customers
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("operacion","obtener_clientes");
+
+        Log.e("CONN",recurso);
+
         Conexion conn=new Conexion(this.activity,this,this.recurso,Utilidades.OBTENER_CLIENTES);
         conn.execute(hashMap);
     }

@@ -35,5 +35,8 @@
     <string name="devol_codigo">Codigo Cliente</string>
     <string name="devol_razon">Razón Social</string>
 
+    <!-- BUSCAR********************************************************************************* -->
+    <string name="buscar">Buscar</string>
+
 
 </resources>

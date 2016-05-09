@@ -15,7 +15,7 @@
         android:title="@string/pref_wifi"
         android:summary=""
         android:dialogTitle="@string/pref_wifi_title"
-        android:defaultValue="PCS"
+        android:defaultValue="@string/wifi_defecto"
         android:textColor="@android:color/black"/>
 
     <com.pcs.vicchiam.devoluciones.views.EditTextPreference
@@ -23,7 +23,7 @@
         android:title="@string/pref_servidor"
         android:summary=""
         android:dialogTitle="@string/pref_servidor_title"
-        android:defaultValue="172.16.0.173"
+        android:defaultValue="@string/servidor_defecto"
         android:textColor="@android:color/black"/>
 
     <com.pcs.vicchiam.devoluciones.views.EditTextPreference
@@ -31,7 +31,7 @@
         android:title="@string/pref_servicio"
         android:summary=""
         android:dialogTitle="@string/pref_servicio_title"
-        android:defaultValue="Apps/android/devoluciones/repartidor.php"
+        android:defaultValue="@string/servicio_defecto"
         android:textColor="@android:color/black"/>
 
     <com.pcs.vicchiam.devoluciones.views.ListPreference
@@ -39,6 +39,6 @@
         android:title="@string/pref_actualizar"
         android:entries="@array/actualizacion_clientes"
         android:entryValues="@array/actualizacion_clientes_values"
-        android:defaultValue="2"/>
+        android:defaultValue="@integer/actualizacion_defecto"/>
 
 </PreferenceScreen>

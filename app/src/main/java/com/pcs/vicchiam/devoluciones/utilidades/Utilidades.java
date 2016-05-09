@@ -129,6 +129,15 @@ public class Utilidades {
         return s;
     }
 
+    public static boolean esNumero(String text){
+        for (char c : text.toCharArray())
+        {
+            if (!Character.isDigit(c))
+                return false;
+        }
+        return true;
+    }
+
 
 
 }

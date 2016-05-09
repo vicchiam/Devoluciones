@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void iniApp(){
         logica=Logica.getInstance(self);
-        logica.comprobarRecursos();
     }
 
 

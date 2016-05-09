@@ -89,6 +89,19 @@ public class ClienteDB extends SQLiteOpenHelper {
     }
 
     /**
+     * To autocompete SQL, this need a _id column
+     * @param columna column to search
+     * @param valor value to search
+     * @return cursor with the results
+     */
+    public Cursor autocompletar(String columna,String valor){
+        SQLiteDatabase db=this.getReadableDatabase();
+        String SQL="SELECT codigo as _id, codigo, nombre FROM "+TABLE_NAME_CLIENTE+" WHERE LOWER("+columna+") LIKE '%"+valor+"%' order by codigo LIMIT 40";
+        Cursor res=db.rawQuery(SQL,null);
+        return  res;
+    }
+
+    /**
      * Insert a customer in database
      * @param codigo
      * @param nombre
