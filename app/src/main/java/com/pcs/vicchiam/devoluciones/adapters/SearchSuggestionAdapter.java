@@ -39,4 +39,10 @@ public class SearchSuggestionAdapter extends CursorAdapter {
         t1.setText(cursor.getString(cursor.getColumnIndex(col_name1)));
         t2.setText(cursor.getString(cursor.getColumnIndex(col_name2)));
     }
+
+    public void refill(Cursor cursor){
+        changeCursor(cursor);
+    }
+
+
 }

@@ -8,8 +8,10 @@ import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 
 import com.pcs.vicchiam.devoluciones.R;
 
@@ -28,8 +30,14 @@ public class Utilidades {
 
     //Connection
     public static final int ERROR_CONEXION=-1;
-    public static final int OBTENER_CLIENTES=1;
+    public static final int OBTENER_CLIENTES_NUEVO=1;
+    public static final int OBTENER_CLIENTES_ACTUALIZAR=2;
+    public static final int OBTENER_ARTICULOS_NUEVO=3;
+    public static final int OBTENER_ARTICULOS_ACTUALIZAR=4;
 
+    //AsyncDatabaseType
+    public static final int CLIENTE=0;
+    public static final int ARTICULO=0;
 
     /**
      * Method that make the alerts
@@ -81,6 +89,11 @@ public class Utilidades {
         }
     }
 
+    public static void crearSnackBar(Activity activity,String mensaje){
+        View v=activity.findViewById(android.R.id.content);
+        Snackbar.make(v,mensaje, Snackbar.LENGTH_LONG).show();
+    }
+
     /**
      * Check the WIFI connection and SSID
      * @param activity parent activity
@@ -123,7 +136,7 @@ public class Utilidades {
     }
 
     public static String fechaCadena(Date d){
-        SimpleDateFormat f=new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat f=new SimpleDateFormat("dd/MM/yyyy");
         String s=null;
         s=f.format(d);
         return s;

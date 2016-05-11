@@ -6,11 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.pcs.vicchiam.devoluciones.PreferenciasBarActivity;
 import com.pcs.vicchiam.devoluciones.R;
+import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
+import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
+import com.pcs.vicchiam.devoluciones.bbdd.DBAsyncTask;
 import com.pcs.vicchiam.devoluciones.interfaces.RespuestaServidor;
 
 import org.json.JSONArray;
@@ -32,6 +36,7 @@ public class Logica implements RespuestaServidor {
     private Activity activity;
     private String recurso;
     private ClienteDB clienteDB;
+    private ArticuloDB articuloDB;
 
     ProgressDialog progressDialog;
 
@@ -50,11 +55,12 @@ public class Logica implements RespuestaServidor {
         this.activity=activity;
         //comprobarRecursos();
         inicializarDatabase();
-        obtenerClientes(true);
+        obtenerDatos(false);
     }
 
     public void inicializarDatabase(){
         clienteDB=new ClienteDB(this.activity);
+        articuloDB=new ArticuloDB(this.activity);
     }
 
     /**
@@ -120,9 +126,9 @@ public class Logica implements RespuestaServidor {
 
     /**
      * Try get of the server all clients according to the frecuency preferences
-     * @param comprobar If is TRUE check date preferences else always get customers
+     * @param forzar If is TRUE remove an insert all
      */
-    public void obtenerClientes(boolean comprobar){
+    public void obtenerDatos(boolean forzar){
         comprobarRecursos();
 
         //Get frecuency preference
@@ -131,11 +137,12 @@ public class Logica implements RespuestaServidor {
 
         //Check if date in preferences is greater than now
         String ahora = Utilidades.fechaCadena(new Date());
-        if(comprobar) {
-            String ultimaActualizacion = prefs.getString("ultima_actualizacion", "01-01-2000");
-            if (!frequencia.equals("0") && ahora.equals(ultimaActualizacion)) {
-                return;
-            }
+        String ultimaActualizacion = prefs.getString("ultima_actualizacion", "01/01/1990");
+        if(forzar){
+            ultimaActualizacion="01/01/1990";
+        }
+        if (ahora.equals(ultimaActualizacion)) {
+            return;
         }
 
         //If now is greater than date in preferences update the date of preferences
@@ -143,13 +150,39 @@ public class Logica implements RespuestaServidor {
         editor.putString("ultima_actualizacion",ahora);
         editor.commit();
 
+        obtenerClientes(ultimaActualizacion,forzar);
+        obtenerArticulos(ultimaActualizacion,forzar);
+    }
+
+    private void obtenerClientes(String fecha, boolean forzar){
         //Update the customers
         HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("operacion","obtener_clientes");
+        hashMap.put("operacion","obtener_clientes_mod");
+        hashMap.put("fecha",fecha);
 
-        Log.e("CONN",recurso);
+        Conexion conn;
+        if(forzar) {
+            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_CLIENTES_NUEVO);
+        }
+        else{
+            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_CLIENTES_ACTUALIZAR);
+        }
+        conn.execute(hashMap);
+    }
 
-        Conexion conn=new Conexion(this.activity,this,this.recurso,Utilidades.OBTENER_CLIENTES);
+    private void obtenerArticulos(String fecha, boolean forzar){
+        //Update the customers
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("operacion","obtener_articulos_mod");
+        hashMap.put("fecha",fecha);
+
+        Conexion conn;
+        if(forzar) {
+            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_ARTICULOS_NUEVO);
+        }
+        else{
+            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_ARTICULOS_ACTUALIZAR);
+        }
         conn.execute(hashMap);
     }
 
@@ -159,9 +192,24 @@ public class Logica implements RespuestaServidor {
             case Utilidades.ERROR_CONEXION:{
                 Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.conn_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
             }
-            case Utilidades.OBTENER_CLIENTES:{
-                procesarClientes(respuesta);
+            case Utilidades.OBTENER_CLIENTES_NUEVO:{
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                dbAsyncTask.guardar(respuesta,true);
                 break;
+            }
+            case Utilidades.OBTENER_CLIENTES_ACTUALIZAR:{
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                dbAsyncTask.guardar(respuesta,false);
+                break;
+            }
+            case Utilidades.OBTENER_ARTICULOS_NUEVO:{
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                dbAsyncTask.guardar(respuesta,true);
+                break;
+            }
+            case Utilidades.OBTENER_ARTICULOS_ACTUALIZAR:{
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                dbAsyncTask.guardar(respuesta,false);
             }
             default:{
                 break;
@@ -172,19 +220,27 @@ public class Logica implements RespuestaServidor {
     /**
      * With a JSON of customers makes a database table of customers
      * @param jsonClientes
+     * @param forzar If is TRUE remove an insert all
      */
-    private void procesarClientes(String jsonClientes){
+    private void procesarClientes(String jsonClientes,boolean forzar){
         try {
-            clienteDB.truncate();
+            if (forzar){
+                clienteDB.truncate();
+            }
             JSONObject jsonObject=new JSONObject(jsonClientes);
             JSONArray jsonArray=jsonObject.getJSONArray("clientes");
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jObj=jsonArray.getJSONObject(i);
                 int codigo=jObj.getInt("CODIGO");
                 String nombre=jObj.getString("NOMBRE");
-                clienteDB.insertar(codigo,nombre);
+                if(forzar) {
+                    clienteDB.insertar(codigo, nombre);
+                }
+                else{
+                    clienteDB.reemplazar(codigo,nombre);
+                }
             }
-            Log.e("COUNT",jsonArray.length()+"");
+            Utilidades.crearSnackBar(activity,"Clientes actualizados "+jsonArray.length());
         } catch (JSONException e) {
             e.printStackTrace();
         }

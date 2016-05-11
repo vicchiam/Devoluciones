@@ -17,7 +17,7 @@
     <!-- MENU NAVIGATION************************************************************************ -->
     <string name="home">Inicio</string>
     <string name="settings">Configuración</string>
-    <string name="actualizar">Actualizar Clientes</string>
+    <string name="actualizar">Actualizar Datos</string>
 
     <!-- ALERTAS ******************************************************************************* -->
     <string name="advertencia">Advertencia</string>
@@ -30,10 +30,16 @@
     <!-- PROGRESO ****************************************************************************** -->
     <string name="progress_title">Espere</string>
     <string name="progress_msj">Obteniendo Datos...</string>
+    <string name="progress_msj_save">Guardando datos...</string>
 
     <!-- DEVOLUCION***************************************************************************** -->
     <string name="devol_codigo">Codigo Cliente</string>
     <string name="devol_razon">Razón Social</string>
+
+    <!-- LINEAS********************************************************************************* -->
+    <string name="linea_codigo">Codigo Producto</string>
+    <string name="linea_descripcion">Descripción</string>
+    <string name="linea_cantidad">Cantidad</string>
 
     <!-- BUSCAR********************************************************************************* -->
     <string name="buscar">Buscar</string>

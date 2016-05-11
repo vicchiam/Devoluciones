@@ -2,15 +2,10 @@ package com.pcs.vicchiam.devoluciones;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,7 +19,6 @@ import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 public class DevolucionActivity extends AppCompatActivity {
 
     private DevolucionActivity self;
-    private ViewPager viewPager;
     private SearchSuggestionAdapter searchAdapter;
     private SearchView searchView;
     private CabeceraFragment cabeceraFragment;
@@ -52,8 +46,6 @@ public class DevolucionActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, cabeceraFragment).commit();
-        //viewPager=(ViewPager)findViewById(R.id.viewpager);
-        //viewPager.setAdapter(new PageAdapter(getSupportFragmentManager()));
     }
 
     @Override
@@ -107,6 +99,7 @@ public class DevolucionActivity extends AppCompatActivity {
                 return true;
             }
         });
+
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
@@ -116,9 +109,14 @@ public class DevolucionActivity extends AppCompatActivity {
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor=(Cursor)searchAdapter.getItem(position);
-                String codigo=cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[0]));
-                String nombre=cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[1]));
-                cabeceraFragment.actualizarCabecera(codigo,nombre);
+                if(self.actualFragment==0) {
+                    String codigo = cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[0]));
+                    String nombre = cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[1]));
+                    cabeceraFragment.actualizarCabecera(codigo, nombre);
+                }
+                else{
+
+                }
                 searchView.onActionViewCollapsed();
                 return true;
             }
@@ -128,43 +126,28 @@ public class DevolucionActivity extends AppCompatActivity {
     }
 
     private void updateSearchSuggestion(String query){
-        String campo1= ClienteDB.COLS_CLIENTE[0];
-        if(!Utilidades.esNumero(query)){
-            campo1=ClienteDB.COLS_CLIENTE[1];
+        if(this.actualFragment==0) {
+            String campo1= ClienteDB.COLS_CLIENTE[0];
+            if(!Utilidades.esNumero(query)){
+                campo1=ClienteDB.COLS_CLIENTE[1];
+            }
+            Cursor cursor = new ClienteDB(self).autocompletar(campo1, query);
+            searchAdapter = new SearchSuggestionAdapter(self, cursor, ClienteDB.COLS_CLIENTE[0], ClienteDB.COLS_CLIENTE[1]);
+            searchView.setSuggestionsAdapter(searchAdapter);
         }
-        Cursor cursor=new ClienteDB(self).autocompletar(campo1,query);
-        searchAdapter=new SearchSuggestionAdapter(self,cursor,ClienteDB.COLS_CLIENTE[0],ClienteDB.COLS_CLIENTE[1]);
-        searchView.setSuggestionsAdapter(searchAdapter);
+        else{
+
+        }
     }
 
     public void abrirLinea(){
+        if (!searchView.isIconified()) {
+            searchView.onActionViewCollapsed();
+        }
         lineaFragment=LineaFragment.newInstance(null);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
         actualFragment=1;
     }
 
-    private class PageAdapter extends FragmentPagerAdapter {
-
-        public final int NUM_PAGES=2;
-
-        public PageAdapter(FragmentManager fm){
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if(position==0) {
-                return cabeceraFragment;
-            }
-            else{
-                return lineaFragment;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
-    }
 
 }

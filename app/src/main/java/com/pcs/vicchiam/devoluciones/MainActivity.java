@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.navigation_item_2:{
-                this.logica.obtenerClientes(false);
+                this.logica.obtenerDatos(true);
                 break;
             }
             case R.id.navigation_item_3: {

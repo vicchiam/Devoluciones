@@ -1,11 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hola mundo!!"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_codigo_pr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="20dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_local_offer_black_24dp"/>
+
+        <TextView
+            android:id="@+id/lbl_codigo_pr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_toRightOf="@+id/img_codigo_pr"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/my_secondary_text"
+            android:text="@string/linea_codigo"/>
+
+        <EditText
+            android:id="@+id/edit_codigo_pr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textColor="@color/my_primary_text"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/img_codigo_pr"
+            android:layout_below="@+id/lbl_codigo_pr"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_descr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="20dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_content_paste_black_24dp"/>
+
+        <TextView
+            android:id="@+id/lbl_descr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_toRightOf="@+id/img_descr"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/my_secondary_text"
+            android:text="@string/linea_descripcion"/>
+
+        <EditText
+            android:id="@+id/edit_descr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/my_primary_text"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/img_descr"
+            android:layout_below="@+id/lbl_descr"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_cantidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="20dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_shopping_basket_black_24dp"/>
+
+        <TextView
+            android:id="@+id/lbl_cantidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_toRightOf="@+id/img_cantidad"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/my_secondary_text"
+            android:text="@string/linea_cantidad"/>
+
+        <EditText
+            android:id="@+id/edit_cantidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textColor="@color/my_primary_text"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/img_cantidad"
+            android:layout_below="@+id/lbl_cantidad"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

@@ -116,6 +116,14 @@ public class ClienteDB extends SQLiteOpenHelper {
         return new Cliente(codigo, nombre);
     }
 
+    public void reemplazar(int codigo, String nombre){
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+        cv.put("codigo",codigo);
+        cv.put("nombre",nombre);
+        db.replace(TABLE_NAME_CLIENTE,null,cv);
+    }
+
     /**
      * Makes a list of customers
      * @param cursor
