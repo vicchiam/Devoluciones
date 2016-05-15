@@ -6,12 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 
 import com.pcs.vicchiam.devoluciones.PreferenciasBarActivity;
 import com.pcs.vicchiam.devoluciones.R;
-import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.bbdd.DBAsyncTask;
@@ -129,7 +126,9 @@ public class Logica implements RespuestaServidor {
      * @param forzar If is TRUE remove an insert all
      */
     public void obtenerDatos(boolean forzar){
-        comprobarRecursos();
+        if(!comprobarRecursos()){
+            return;
+        }
 
         //Get frecuency preference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -147,69 +146,92 @@ public class Logica implements RespuestaServidor {
 
         //If now is greater than date in preferences update the date of preferences
         SharedPreferences.Editor editor=prefs.edit();
-        editor.putString("ultima_actualizacion",ahora);
+        editor.putString("ultima_actualizacion",ultimaActualizacion);
         editor.commit();
 
-        obtenerClientes(ultimaActualizacion,forzar);
-        obtenerArticulos(ultimaActualizacion,forzar);
+        if(forzar) {
+            obtenerClientes(Utilidades.OBTENER_CLIENTES_NUEVO);
+        }
+        else{
+            obtenerClientes(Utilidades.OBTENER_CLIENTES_ACTUALIZAR);
+        }
     }
 
-    private void obtenerClientes(String fecha, boolean forzar){
+    private void obtenerClientes(int tipo){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
+
         //Update the customers
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("operacion","obtener_clientes_mod");
         hashMap.put("fecha",fecha);
 
-        Conexion conn;
-        if(forzar) {
-            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_CLIENTES_NUEVO);
-        }
-        else{
-            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_CLIENTES_ACTUALIZAR);
-        }
+        Conexion conn = new Conexion(this.activity, this, this.recurso, tipo);
         conn.execute(hashMap);
     }
 
-    private void obtenerArticulos(String fecha, boolean forzar){
+    private void obtenerArticulos(int tipo){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
+
         //Update the customers
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("operacion","obtener_articulos_mod");
         hashMap.put("fecha",fecha);
 
-        Conexion conn;
-        if(forzar) {
-            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_ARTICULOS_NUEVO);
-        }
-        else{
-            conn = new Conexion(this.activity, this, this.recurso, Utilidades.OBTENER_ARTICULOS_ACTUALIZAR);
-        }
+        Conexion conn = new Conexion(this.activity, this, this.recurso,tipo);
         conn.execute(hashMap);
     }
 
     @Override
     public void respuesta(int tipo,String respuesta) {
         switch (tipo){
+            case Utilidades.ERROR_BASE_DATOS:{
+                Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.database_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                break;
+            }
             case Utilidades.ERROR_CONEXION:{
                 Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.conn_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                break;
             }
             case Utilidades.OBTENER_CLIENTES_NUEVO:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this,Utilidades.FINALIZAR_CLIENTES_NUEVO);
                 dbAsyncTask.guardar(respuesta,true);
                 break;
             }
             case Utilidades.OBTENER_CLIENTES_ACTUALIZAR:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this, Utilidades.FINALIZAR_CLIENTES_ACTUALIZAR);
                 dbAsyncTask.guardar(respuesta,false);
                 break;
             }
             case Utilidades.OBTENER_ARTICULOS_NUEVO:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this, Utilidades.FINALIZAR_ARTICULOS);
                 dbAsyncTask.guardar(respuesta,true);
                 break;
             }
             case Utilidades.OBTENER_ARTICULOS_ACTUALIZAR:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this, Utilidades.FINALIZAR_ARTICULOS);
                 dbAsyncTask.guardar(respuesta,false);
+            }
+            case Utilidades.FINALIZAR_CLIENTES_NUEVO:{
+                Utilidades.crearSnackBar(activity, activity.getResources().getString(R.string.num_clientes,respuesta));
+                obtenerArticulos(Utilidades.OBTENER_ARTICULOS_NUEVO);
+                break;
+            }
+            case Utilidades.FINALIZAR_CLIENTES_ACTUALIZAR:{
+                Utilidades.crearSnackBar(activity, activity.getResources().getString(R.string.num_clientes,respuesta));
+                obtenerArticulos(Utilidades.OBTENER_ARTICULOS_ACTUALIZAR);
+                break;
+            }
+            case Utilidades.FINALIZAR_ARTICULOS:{
+                Utilidades.crearSnackBar(activity, activity.getResources().getString(R.string.num_articulos,respuesta));
+
+                String ahora = Utilidades.fechaCadena(new Date());
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                SharedPreferences.Editor editor=prefs.edit();
+                editor.putString("ultima_actualizacion",ahora);
+                editor.commit();
+                break;
             }
             default:{
                 break;

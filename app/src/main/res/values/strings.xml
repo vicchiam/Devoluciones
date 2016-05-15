@@ -26,6 +26,7 @@
     <string name="no_servicio_pref">No se ha indicado ningún servicio, ve a configuración</string>
     <string name="no_wifi_conn">No se ha podido conectar a la red Wifi indicada: %1$s</string>
     <string name="conn_err">Error al conectar con el servidor intentelo más tarde</string>
+    <string name="database_err">Error en la base de datos</string>
 
     <!-- PROGRESO ****************************************************************************** -->
     <string name="progress_title">Espere</string>
@@ -40,9 +41,14 @@
     <string name="linea_codigo">Codigo Producto</string>
     <string name="linea_descripcion">Descripción</string>
     <string name="linea_cantidad">Cantidad</string>
+    <string name="linea_umv">UMV</string>
 
     <!-- BUSCAR********************************************************************************* -->
     <string name="buscar">Buscar</string>
+
+    <!-- SNAKE********************************************************************************** -->
+    <string name="num_clientes">Numero de clientes: %1$s</string>
+    <string name="num_articulos">Número de articulos: %1$s</string>
 
 
 </resources>

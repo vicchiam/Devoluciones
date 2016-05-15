@@ -73,6 +73,11 @@ public class Conexion extends AsyncTask<HashMap<String,String>,Void,String>{
     @Override
     protected void onPostExecute(final String respuesta){
         if (dialog.isShowing()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             dialog.dismiss();
         }
         //The method of the interface RespuestaServidor, need type and response

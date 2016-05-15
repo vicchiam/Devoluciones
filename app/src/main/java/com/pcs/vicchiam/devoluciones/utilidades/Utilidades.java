@@ -29,11 +29,16 @@ public class Utilidades {
     public static final int TIPO_ADVERTENCIA_CONFIGURACION=1;
 
     //Connection
+    public static final int ERROR_BASE_DATOS=-2;
     public static final int ERROR_CONEXION=-1;
     public static final int OBTENER_CLIENTES_NUEVO=1;
     public static final int OBTENER_CLIENTES_ACTUALIZAR=2;
     public static final int OBTENER_ARTICULOS_NUEVO=3;
     public static final int OBTENER_ARTICULOS_ACTUALIZAR=4;
+    public static final int FINALIZAR_CLIENTES_NUEVO=5;
+    public static final int FINALIZAR_CLIENTES_ACTUALIZAR=6;
+    public static final int FINALIZAR_ARTICULOS=7;
+
 
     //AsyncDatabaseType
     public static final int CLIENTE=0;

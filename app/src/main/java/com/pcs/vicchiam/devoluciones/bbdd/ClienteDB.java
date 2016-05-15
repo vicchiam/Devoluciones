@@ -124,6 +124,11 @@ public class ClienteDB extends SQLiteOpenHelper {
         db.replace(TABLE_NAME_CLIENTE,null,cv);
     }
 
+    public void eliminar(int codigo){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete(TABLE_NAME_CLIENTE,"codigo="+codigo,null);
+    }
+
     /**
      * Makes a list of customers
      * @param cursor

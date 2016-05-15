@@ -91,6 +91,11 @@ public class ArticuloDB extends SQLiteOpenHelper{
         db.replace(TABLE_NAME_ARTICULO,null,cv);
     }
 
+    public void eliminar(int codigo){
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete(TABLE_NAME_ARTICULO,"codigo="+codigo,null);
+    }
+
 
     private List<Articulo> prepararListado(Cursor cursor){
         List<Articulo> list=new ArrayList<>();

@@ -1,16 +1,21 @@
 package com.pcs.vicchiam.devoluciones;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.pcs.vicchiam.devoluciones.adapters.SearchSuggestionAdapter;
+import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.fragments.CabeceraFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
@@ -93,7 +98,7 @@ public class DevolucionActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(newText.length()>=3){
+                if(newText.length()>=2){
                     updateSearchSuggestion(newText);
                 }
                 return true;
@@ -115,7 +120,10 @@ public class DevolucionActivity extends AppCompatActivity {
                     cabeceraFragment.actualizarCabecera(codigo, nombre);
                 }
                 else{
-
+                    String codigo = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[0]));
+                    String nombre = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[1]));
+                    String umv = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[2]));
+                    lineaFragment.actualizarLinea(codigo, nombre, umv);
                 }
                 searchView.onActionViewCollapsed();
                 return true;
@@ -123,6 +131,17 @@ public class DevolucionActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() != null) {
+                String codigoBarras=result.getContents();
+                Log.e("BARCODE",codigoBarras);
+            }
+        }
     }
 
     private void updateSearchSuggestion(String query){
@@ -136,7 +155,13 @@ public class DevolucionActivity extends AppCompatActivity {
             searchView.setSuggestionsAdapter(searchAdapter);
         }
         else{
-
+            String campo1= ArticuloDB.COLS_ARTICULO[0];
+            if(!Utilidades.esNumero(query)){
+                campo1=ArticuloDB.COLS_ARTICULO[1];
+            }
+            Cursor cursor = new ArticuloDB(self).autocompletar(campo1,query);
+            searchAdapter=new SearchSuggestionAdapter(self,cursor, ArticuloDB.COLS_ARTICULO[0],ArticuloDB.COLS_ARTICULO[1]);
+            searchView.setSuggestionsAdapter(searchAdapter);
         }
     }
 
