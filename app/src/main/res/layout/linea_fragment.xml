@@ -1,106 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/img_codigo_art"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="20dp"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_local_offer_black_24dp"/>
-
-        <TextView
-            android:id="@+id/lbl_codigo_art"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:layout_toRightOf="@+id/img_codigo_art"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/my_secondary_text"
-            android:text="@string/linea_codigo"/>
-
-        <EditText
-            android:id="@+id/edit_codigo_art"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:textColor="@color/my_primary_text"
-            android:layout_marginRight="10dp"
-            android:layout_toRightOf="@+id/img_codigo_art"
-            android:layout_below="@+id/lbl_codigo_art"/>
-
-        <ImageButton
-            android:id="@+id/imgbtn_barcode_art"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:padding="2dp"
-            android:src="@drawable/ic_barcode"
-            android:layout_margin="5dp"
-            android:background="@android:color/transparent"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/img_descr_art"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="20dp"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_content_paste_black_24dp"/>
-
-        <TextView
-            android:id="@+id/lbl_descr_art"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:layout_toRightOf="@+id/img_descr_art"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/my_secondary_text"
-            android:text="@string/linea_descripcion"/>
-
-        <EditText
-            android:id="@+id/edit_descr_art"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/my_primary_text"
-            android:layout_marginRight="10dp"
-            android:layout_toRightOf="@+id/img_descr_art"
-            android:layout_below="@+id/lbl_descr_art"/>
-
-    </RelativeLayout>
+    android:layout_height="wrap_content" >
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/img_cantidad_art"
+                android:id="@+id/img_codigo_art"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp"
@@ -108,56 +23,230 @@
                 android:paddingRight="15dp"
                 android:paddingBottom="20dp"
                 android:layout_alignParentLeft="true"
-                android:src="@drawable/ic_shopping_basket_black_24dp"/>
+                android:src="@drawable/ic_local_offer_black_24dp"/>
 
             <TextView
-                android:id="@+id/lbl_cantidad_art"
-                android:layout_width="wrap_content"
+                android:id="@+id/lbl_codigo_art"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:layout_toRightOf="@+id/img_cantidad_art"
+                android:layout_toRightOf="@+id/img_codigo_art"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/my_secondary_text"
-                android:text="@string/linea_cantidad"/>
+                android:text="@string/linea_codigo"/>
 
             <EditText
-                android:id="@+id/edit_cantidad_art"
+                android:id="@+id/edit_codigo_art"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:textColor="@color/my_primary_text"
                 android:layout_marginRight="10dp"
-                android:layout_toRightOf="@+id/img_cantidad_art"
-                android:layout_below="@+id/lbl_cantidad_art"/>
+                android:layout_toRightOf="@+id/img_codigo_art"
+                android:layout_below="@+id/lbl_codigo_art"/>
+
+            <ImageButton
+                android:id="@+id/imgbtn_barcode_art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:padding="2dp"
+                android:src="@drawable/ic_barcode"
+                android:layout_margin="5dp"
+                android:background="@android:color/transparent"/>
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="3">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/lbl_umv_art"
+            <ImageView
+                android:id="@+id/img_descr_art"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/my_secondary_text"
-                android:text="@string/linea_umv"/>
+                android:paddingTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_content_paste_black_24dp"/>
 
-            <EditText
-                android:id="@+id/edit_umv_art"
+            <TextView
+                android:id="@+id/lbl_descr_art"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:padding="5dp"
+                android:layout_toRightOf="@+id/img_descr_art"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/my_secondary_text"
+                android:text="@string/linea_descripcion"/>
+
+            <EditText
+                android:id="@+id/edit_descr_art"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textColor="@color/my_primary_text"
                 android:layout_marginRight="10dp"
-                android:layout_below="@+id/lbl_umv_art"/>
+                android:layout_toRightOf="@+id/img_descr_art"
+                android:layout_below="@+id/lbl_descr_art"/>
 
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/img_cantidad_art"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="20dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="20dp"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ic_shopping_basket_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/lbl_cantidad_art"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_toRightOf="@+id/img_cantidad_art"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/my_secondary_text"
+                    android:text="@string/linea_cantidad"/>
+
+                <EditText
+                    android:id="@+id/edit_cantidad_art"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/my_primary_text"
+                    android:layout_marginRight="10dp"
+                    android:layout_toRightOf="@+id/img_cantidad_art"
+                    android:layout_below="@+id/lbl_cantidad_art"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3">
+
+                <TextView
+                    android:id="@+id/lbl_umv_art"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/my_secondary_text"
+                    android:text="@string/linea_umv"/>
+
+                <EditText
+                    android:id="@+id/edit_umv_art"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/my_primary_text"
+                    android:layout_marginRight="10dp"
+                    android:layout_below="@+id/lbl_umv_art"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_lote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_label_outline_black_24dp"/>
+
+            <TextView
+                android:id="@+id/lbl_lote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_toRightOf="@+id/img_lote"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/my_secondary_text"
+                android:text="@string/linea_lote"/>
+
+            <EditText
+                android:id="@+id/edit_lote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_primary_text"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/img_lote"
+                android:layout_below="@+id/lbl_lote"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/content_caducidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_caducidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_today_black_24dp"/>
+
+            <TextView
+                android:id="@+id/lbl_caducidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_toRightOf="@+id/img_caducidad"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/my_secondary_text"
+                android:text="@string/linea_caducidad"/>
+
+            <TextView
+                android:id="@+id/edit_caducidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_primary_text"
+                android:paddingTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/img_caducidad"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_below="@+id/lbl_caducidad"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/my_secondary_text"
+                android:layout_marginRight="15dp"
+                android:layout_toRightOf="@+id/img_caducidad"
+                android:layout_below="@id/edit_caducidad"/>
+
+        </RelativeLayout>
+
+
     </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>

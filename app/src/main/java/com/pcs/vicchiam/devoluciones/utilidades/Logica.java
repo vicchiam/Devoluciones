@@ -130,12 +130,9 @@ public class Logica implements RespuestaServidor {
             return;
         }
 
-        //Get frecuency preference
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        String frequencia=prefs.getString("frecuencia_actualizar_cliente",activity.getResources().getInteger(R.integer.actualizacion_defecto)+"");
-
         //Check if date in preferences is greater than now
         String ahora = Utilidades.fechaCadena(new Date());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         String ultimaActualizacion = prefs.getString("ultima_actualizacion", "01/01/1990");
         if(forzar){
             ultimaActualizacion="01/01/1990";

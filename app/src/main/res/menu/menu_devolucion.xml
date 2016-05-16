@@ -10,4 +10,11 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_save_white_24dp"
+        android:title="@string/guardar"
+        app:showAsAction="always"/>
+
+
 </menu>

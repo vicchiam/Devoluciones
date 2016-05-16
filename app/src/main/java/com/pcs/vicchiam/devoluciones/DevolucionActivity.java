@@ -1,8 +1,10 @@
 package com.pcs.vicchiam.devoluciones;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -15,11 +17,14 @@ import android.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.pcs.vicchiam.devoluciones.adapters.SearchSuggestionAdapter;
+import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.fragments.CabeceraFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
+
+import java.util.List;
 
 public class DevolucionActivity extends AppCompatActivity {
 
@@ -80,6 +85,15 @@ public class DevolucionActivity extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
                     actualFragment=0;
                 }
+                break;
+            }
+            case R.id.menu_save:{
+                if(actualFragment==0){
+
+                }
+                else{
+
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -139,7 +153,7 @@ public class DevolucionActivity extends AppCompatActivity {
         if(result != null) {
             if(result.getContents() != null) {
                 String codigoBarras=result.getContents();
-                Log.e("BARCODE",codigoBarras);
+                procesarCodigoBarras(codigoBarras);
             }
         }
     }
@@ -172,6 +186,46 @@ public class DevolucionActivity extends AppCompatActivity {
         lineaFragment=LineaFragment.newInstance(null);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
         actualFragment=1;
+    }
+
+    private void procesarCodigoBarras(String codigoBarras){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(self);
+        boolean comporbar_barcode= prefs.getBoolean("check_barcode",false);
+        String codigo_empresa=prefs.getString("codigo_empresa","");
+
+        String p3=codigoBarras.substring(0,3);
+        String empresa=codigoBarras.substring(3,10);
+        String codigo=codigoBarras.substring(10,15);
+        String p3_2=codigoBarras.substring(15,18);
+        String fecha=codigoBarras.substring(18,24);
+        String p3_3=codigoBarras.substring(24,26);
+        String lote=codigoBarras.substring(26);
+
+        Log.e("BARCODE",empresa+"  "+codigo+"  "+lote+"   "+codigo_empresa);
+
+        if(comporbar_barcode && !empresa.equals(codigo_empresa)){
+            Utilidades.Alerts(this,null,self.getResources().getString(R.string.error_barcode_company),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+            return;
+        }
+
+        ArticuloDB articuloDB=new ArticuloDB(self);
+        List<Articulo> articulos=articuloDB.buscar(ArticuloDB.COLS_ARTICULO[0],codigo);
+        if(articulos.size()>0) {
+            Articulo articulo = articulos.get(0);
+
+            String dia=fecha.substring(0,2);
+            String mes=fecha.substring(2,4);
+            String anyo=fecha.substring(4,6);
+
+            String caducidad=dia+"-"+mes+"-20"+anyo;
+
+            lineaFragment.actualizarLinea(codigo,articulo.getNombre(),articulo.getUmv(),lote,caducidad);
+
+        }
+
+
+
+
     }
 
 

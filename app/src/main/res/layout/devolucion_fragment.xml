@@ -79,6 +79,88 @@
             android:layout_toRightOf="@+id/img_razon"
             android:layout_below="@+id/lbl_razon"/>
 
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_accion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="20dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_record_voice_over_black_24dp"/>
+
+        <TextView
+            android:id="@+id/lbl_accion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_toRightOf="@+id/img_accion"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/my_secondary_text"
+            android:text="@string/devol_accion"/>
+
+        <Spinner
+            android:id="@+id/spinner_accion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/img_accion"
+            android:layout_below="@+id/lbl_accion"
+            android:entries="@array/acciones"
+            android:spinnerMode="dialog"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/my_secondary_text"
+            android:layout_marginRight="15dp"
+            android:layout_toRightOf="@+id/img_accion"
+            android:layout_below="@id/spinner_accion"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_motivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="20dp"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_assignment_late_black_24dp"/>
+
+        <TextView
+            android:id="@+id/lbl_motivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_toRightOf="@+id/img_motivo"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/my_secondary_text"
+            android:text="@string/devol_motivo"/>
+
+        <EditText
+            android:id="@+id/edit_motivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/my_primary_text"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/img_motivo"
+            android:layout_below="@+id/lbl_motivo"/>
+
     </RelativeLayout>
 
     <LinearLayout

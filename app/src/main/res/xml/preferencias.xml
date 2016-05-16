@@ -34,11 +34,17 @@
         android:defaultValue="@string/servicio_defecto"
         android:textColor="@android:color/black"/>
 
-    <com.pcs.vicchiam.devoluciones.views.ListPreference
-        android:key="frecuencia_actualizar_cliente"
-        android:title="@string/pref_actualizar"
-        android:entries="@array/actualizacion_clientes"
-        android:entryValues="@array/actualizacion_clientes_values"
-        android:defaultValue="@integer/actualizacion_defecto"/>
+    <CheckBoxPreference
+        android:key="check_barcode"
+        android:title="@string/pref_check_barcode"
+        android:defaultValue="false"/>
+
+    <com.pcs.vicchiam.devoluciones.views.EditTextPreference
+        android:key="codigo_empresa"
+        android:title="@string/pref_barcode"
+        android:summary=""
+        android:dialogTitle="@string/pref_barcode_title"
+        android:defaultValue="@string/barcode_defecto"
+        android:textColor="@android:color/black"/>
 
 </PreferenceScreen>

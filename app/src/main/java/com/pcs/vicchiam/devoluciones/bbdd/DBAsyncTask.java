@@ -76,7 +76,7 @@ public class DBAsyncTask {
                         if(estado.equals("A")) {
                             clienteDB.reemplazar(codigo, nombre);
                         }
-                        else{
+                        else if(estado.equals("P")){
                             clienteDB.eliminar(codigo);
                         }
                     }
@@ -96,7 +96,7 @@ public class DBAsyncTask {
                         if(estado.equals("A")) {
                             articuloDB.reemplazar(codigo, nombre, umv);
                         }
-                        else{
+                        else  if(estado.equals("P")){
                             articuloDB.eliminar(codigo);
                         }
                     }

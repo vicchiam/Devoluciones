@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="actualizacion_clientes">
-        <item>Al momento</item>
-        <item>Diaria</item>
-    </string-array>
-
-    <string-array name="actualizacion_clientes_values">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
+    <array name="acciones">
+        <item>Retenido</item>
+        <item>Reproceso</item>
+        <item>Venta</item>
+        <item>Basura</item>
+    </array>
+    
 </resources>

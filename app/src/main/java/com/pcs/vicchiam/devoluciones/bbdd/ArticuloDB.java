@@ -53,7 +53,7 @@ public class ArticuloDB extends SQLiteOpenHelper{
     }
 
     public List<Articulo> obtenerTodos(){
-        List<Cliente> list=new ArrayList<>();
+        List<Articulo> list=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
         Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_ARTICULO, null);
         return this.prepararListado(res);
@@ -61,7 +61,7 @@ public class ArticuloDB extends SQLiteOpenHelper{
 
     public List<Articulo> buscar(String columna, String valor){
         SQLiteDatabase db=this.getReadableDatabase();
-        Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_ARTICULO+" WHERE ?=?",new String[]{columna,valor});
+        Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_ARTICULO+" WHERE "+columna+"="+valor+"",null);
         return this.prepararListado(res);
     }
 

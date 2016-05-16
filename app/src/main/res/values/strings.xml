@@ -11,8 +11,9 @@
     <string name="pref_servidor">Indica la IP del servidor</string>
     <string name="pref_servicio_title">URL</string>
     <string name="pref_servicio">Indica la URL del servicio</string>
-    <string name="pref_actualizar_title">Actualizar Cliente</string>
-    <string name="pref_actualizar">Frecuencia actualización Clientes</string>
+    <string name="pref_barcode">Código Barras Empresa</string>
+    <string name="pref_barcode_title">Código Barras</string>
+    <string name="pref_check_barcode">¿Comprobar codigo barras empresa?</string>
 
     <!-- MENU NAVIGATION************************************************************************ -->
     <string name="home">Inicio</string>
@@ -27,6 +28,7 @@
     <string name="no_wifi_conn">No se ha podido conectar a la red Wifi indicada: %1$s</string>
     <string name="conn_err">Error al conectar con el servidor intentelo más tarde</string>
     <string name="database_err">Error en la base de datos</string>
+    <string name="error_barcode_company">La etiqueta no pertenece a la compania</string>
 
     <!-- PROGRESO ****************************************************************************** -->
     <string name="progress_title">Espere</string>
@@ -36,15 +38,20 @@
     <!-- DEVOLUCION***************************************************************************** -->
     <string name="devol_codigo">Codigo Cliente</string>
     <string name="devol_razon">Razón Social</string>
+    <string name="devol_accion">Acción a tomar</string>
+    <string name="devol_motivo">Motivo</string>
 
     <!-- LINEAS********************************************************************************* -->
     <string name="linea_codigo">Codigo Producto</string>
     <string name="linea_descripcion">Descripción</string>
     <string name="linea_cantidad">Cantidad</string>
     <string name="linea_umv">UMV</string>
+    <string name="linea_lote">Lote</string>
+    <string name="linea_caducidad">Caducidad (Pulsar aquí para abrir calendario)</string>
 
-    <!-- BUSCAR********************************************************************************* -->
+    <!-- MENU DEVOLUCION********************************************************************************* -->
     <string name="buscar">Buscar</string>
+    <string name="guardar">Guardar</string>
 
     <!-- SNAKE********************************************************************************** -->
     <string name="num_clientes">Numero de clientes: %1$s</string>

@@ -15,4 +15,5 @@
     <color name="my_float_button">#ec6e07</color>
     <color name="my_white">#FFFFFF</color>
     <color name="my_special_text">#20A296</color>
+    <color name="my_light_gray">#DCDCDC</color>
 </resources>

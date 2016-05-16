@@ -18,9 +18,9 @@ public class Articulo {
     }
 
     public Articulo(Cursor cursor){
-        this.codigo=cursor.getInt(cursor.getColumnIndex("codigo"));
-        this.nombre=cursor.getString(cursor.getColumnIndex("nombre"));
-        this.umv=cursor.getString(cursor.getColumnIndex("umv"));
+        this.codigo=cursor.getInt(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[0]));
+        this.nombre=cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[1]));
+        this.umv=cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[2]));
     }
 
     public int getCodigo() {
