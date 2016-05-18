@@ -3,7 +3,8 @@ package com.pcs.vicchiam.devoluciones.bbdd;
 import android.database.Cursor;
 
 /**
- * Created by vicch on 11/05/2016.
+ * Created by vicchiam on 11/05/2016.
+ * Class that represent a Article
  */
 public class Articulo {
 
@@ -17,6 +18,10 @@ public class Articulo {
         this.umv=umv;
     }
 
+    /**
+     * Constructor that make a Article from a database Cirsor
+     * @param cursor database cursor
+     */
     public Articulo(Cursor cursor){
         this.codigo=cursor.getInt(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[0]));
         this.nombre=cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[1]));

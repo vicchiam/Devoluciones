@@ -11,7 +11,8 @@ import android.widget.TextView;
 import com.pcs.vicchiam.devoluciones.R;
 
 /**
- * Created by vicch on 09/05/2016.
+ * Created by vicchiam on 09/05/2016.
+ * Class that make a suggestions of the autocomplete widget
  */
 public class SearchSuggestionAdapter extends CursorAdapter {
 

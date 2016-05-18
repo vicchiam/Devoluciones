@@ -15,6 +15,11 @@ import android.view.View;
 
 import com.pcs.vicchiam.devoluciones.utilidades.Logica;
 
+/**
+ * Created by vicchiam on 01/05/2016.
+ * Class that make a main activity
+ */
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout drawerLayout;
@@ -34,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /*INICIALIZAR UI********************************************************************************/
 
+    /**
+     * Initialize a user interface
+     */
     private void initializeUI(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,6 +80,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Actions when touch a navigation bar
+     * @param menuItem
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         if (menuItem.isChecked()) {
@@ -126,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /*MIS METODOS**********************************************************************************/
 
+    /**
+     * Initialize the application
+     */
     private void iniApp(){
         logica=Logica.getInstance(self);
     }

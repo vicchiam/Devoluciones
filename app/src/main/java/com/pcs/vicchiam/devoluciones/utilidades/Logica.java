@@ -12,6 +12,7 @@ import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.bbdd.DBAsyncTask;
+import com.pcs.vicchiam.devoluciones.bbdd.DevolucionDB;
 import com.pcs.vicchiam.devoluciones.interfaces.RespuestaServidor;
 
 import org.json.JSONArray;
@@ -34,6 +35,7 @@ public class Logica implements RespuestaServidor {
     private String recurso;
     private ClienteDB clienteDB;
     private ArticuloDB articuloDB;
+    private DevolucionDB devolucionDB;
 
     ProgressDialog progressDialog;
 
@@ -55,9 +57,13 @@ public class Logica implements RespuestaServidor {
         obtenerDatos(false);
     }
 
+    /**
+     * Create all objects tha represent a database tables
+     */
     public void inicializarDatabase(){
         clienteDB=new ClienteDB(this.activity);
         articuloDB=new ArticuloDB(this.activity);
+        devolucionDB=new DevolucionDB(this.activity);
     }
 
     /**
@@ -146,7 +152,7 @@ public class Logica implements RespuestaServidor {
         editor.putString("ultima_actualizacion",ultimaActualizacion);
         editor.commit();
 
-        if(forzar) {
+        if(forzar || ultimaActualizacion.equals("01/01/1990")) {
             obtenerClientes(Utilidades.OBTENER_CLIENTES_NUEVO);
         }
         else{
@@ -154,6 +160,10 @@ public class Logica implements RespuestaServidor {
         }
     }
 
+    /**
+     * Start process that get all customers
+     * @param tipo
+     */
     private void obtenerClientes(int tipo){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
@@ -167,6 +177,10 @@ public class Logica implements RespuestaServidor {
         conn.execute(hashMap);
     }
 
+    /**
+     * Start process that get all articles
+     * @param tipo
+     */
     private void obtenerArticulos(int tipo){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
@@ -180,6 +194,11 @@ public class Logica implements RespuestaServidor {
         conn.execute(hashMap);
     }
 
+    /**
+     * This function get all responses from Conecion and process these.
+     * @param tipo
+     * @param respuesta
+     */
     @Override
     public void respuesta(int tipo,String respuesta) {
         switch (tipo){

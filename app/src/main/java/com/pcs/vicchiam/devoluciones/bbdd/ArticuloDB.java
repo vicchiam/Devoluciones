@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by vicch on 11/05/2016.
+ * Created by vicchiam on 11/05/2016.
+ * Class that make an hand all operations of the articles in SQLite database
  */
 public class ArticuloDB extends SQLiteOpenHelper{
 
@@ -20,6 +21,10 @@ public class ArticuloDB extends SQLiteOpenHelper{
     public static final String[] COLS_ARTICULO={"codigo","articulo","umv"};
     public static final String[] COLS_TYPE_ARTICULO={"INTEGER PRIMARY KEY","TEXT","TEXT"};
 
+    /**
+     * Make a SQL create string
+     * @return SQL create string
+     */
     public static String CREATE_SQL(){
         String SQL="CREATE TABLE IF NOT EXISTS "+TABLE_NAME_ARTICULO+" (";
         for(int i=0;i<(COLS_ARTICULO.length-1);i++){
@@ -29,6 +34,9 @@ public class ArticuloDB extends SQLiteOpenHelper{
         return SQL;
     }
 
+    /**
+     * Make a drop SQL string for delete all table
+     */
     public static final String DROP_SQL="DROP TABLE IF EXISTS "+TABLE_NAME_ARTICULO;
 
     public ArticuloDB(Context context){
@@ -46,12 +54,19 @@ public class ArticuloDB extends SQLiteOpenHelper{
         onCreate(db);
     }
 
+    /**
+     * Deleta and create table
+     */
     public void truncate(){
         SQLiteDatabase db=this.getWritableDatabase();
         db.execSQL(DROP_SQL);
         onCreate(db);
     }
 
+    /**
+     * Get all articles
+     * @return list of all articles
+     */
     public List<Articulo> obtenerTodos(){
         List<Articulo> list=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
@@ -59,12 +74,24 @@ public class ArticuloDB extends SQLiteOpenHelper{
         return this.prepararListado(res);
     }
 
+    /**
+     * Search a article for your column and value
+     * @param columna column of table
+     * @param valor value to search
+     * @return a list of articles that check the query
+     */
     public List<Articulo> buscar(String columna, String valor){
         SQLiteDatabase db=this.getReadableDatabase();
         Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_ARTICULO+" WHERE "+columna+"="+valor+"",null);
         return this.prepararListado(res);
     }
 
+    /**
+     * Function for return a autocomplet query
+     * @param columna column to search
+     * @param valor value to search
+     * @return a list of articles that check this query
+     */
     public Cursor autocompletar(String columna,String valor){
         SQLiteDatabase db=this.getReadableDatabase();
         String SQL="SELECT codigo as _id, codigo, articulo, umv FROM "+TABLE_NAME_ARTICULO+" WHERE LOWER("+columna+") LIKE '%"+valor+"%' order by codigo LIMIT 40";
@@ -72,6 +99,13 @@ public class ArticuloDB extends SQLiteOpenHelper{
         return  res;
     }
 
+    /**
+     * Inseert article in database
+     * @param codigo
+     * @param articulo
+     * @param umv
+     * @return
+     */
     public Articulo insertar(int codigo,String articulo, String umv){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
@@ -82,6 +116,12 @@ public class ArticuloDB extends SQLiteOpenHelper{
         return new Articulo(codigo, articulo, umv);
     }
 
+    /**
+     * Insert or update article in database
+     * @param codigo
+     * @param articulo
+     * @param umv
+     */
     public void reemplazar(int codigo, String articulo, String umv){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
@@ -91,12 +131,20 @@ public class ArticuloDB extends SQLiteOpenHelper{
         db.replace(TABLE_NAME_ARTICULO,null,cv);
     }
 
+    /**
+     * Delete a article in database
+     * @param codigo
+     */
     public void eliminar(int codigo){
         SQLiteDatabase db=this.getWritableDatabase();
         db.delete(TABLE_NAME_ARTICULO,"codigo="+codigo,null);
     }
 
-
+    /**
+     * Make a list of articles from a database cursor
+     * @param cursor database cursor
+     * @return list of articles
+     */
     private List<Articulo> prepararListado(Cursor cursor){
         List<Articulo> list=new ArrayList<>();
         cursor.moveToFirst();

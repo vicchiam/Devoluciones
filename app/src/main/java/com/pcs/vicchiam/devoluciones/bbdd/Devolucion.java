@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by vicch on 16/05/2016.
+ * Created by vicchiam on 16/05/2016.
+ * Make a devolution object
  */
 public class Devolucion {
 
@@ -16,7 +17,15 @@ public class Devolucion {
     private String accion;
     private String motivo;
     private List<Linea> lineas;
-    private List<String> adjuntos;
+    private List<Adjunto> adjuntos;
+
+    /**
+     * Constructor that create a empty objetc
+     */
+    public Devolucion(){
+        this.lineas=new ArrayList<>();
+        this.adjuntos=new ArrayList<>();
+    }
 
     public Devolucion(String codigo, String nombre, String accion, String motivo) {
         this.id=0;
@@ -82,11 +91,46 @@ public class Devolucion {
         this.lineas = lineas;
     }
 
-    public List<String> getAdjuntos() {
+    public List<Adjunto> getAdjuntos() {
         return adjuntos;
     }
 
-    public void setAdjuntos(List<String> adjuntos) {
+    public void setAdjuntos(List<Adjunto> adjuntos) {
         this.adjuntos = adjuntos;
     }
+
+    public void setLinea(Linea linea){
+        int pos=-1;
+        for(int i=0;i<lineas.size() && linea.getId()!=0;i++){
+            if(linea.getId()==lineas.get(i).getId()){
+                pos=i;
+                break;
+            }
+        }
+        if(pos>=0)
+            lineas.remove(pos);
+        lineas.add(linea);
+    }
+
+    public void setAdjunto(Adjunto a){
+        adjuntos.add(a);
+    }
+
+    public Linea getLinea(long id){
+        for(Linea l : lineas){
+            if(l.getId()==id)
+                return l;
+        }
+        return null;
+    }
+
+    public Adjunto getAdjunto(long id){
+        for(Adjunto a : adjuntos){
+            if(a.getId()==id){
+                return a;
+            }
+        }
+        return null;
+    }
+
 }

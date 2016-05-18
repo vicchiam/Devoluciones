@@ -9,7 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,12 +20,17 @@ import com.pcs.vicchiam.devoluciones.adapters.SearchSuggestionAdapter;
 import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
+import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
 import com.pcs.vicchiam.devoluciones.fragments.CabeceraFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
 import java.util.List;
 
+/**
+ * Created by vicchiam on 01/05/2016.
+ * Class that make a activity that contains a devolutions and lines
+ */
 public class DevolucionActivity extends AppCompatActivity {
 
     private DevolucionActivity self;
@@ -45,8 +50,13 @@ public class DevolucionActivity extends AppCompatActivity {
         actualFragment=0;
 
         initializeUI();
+
+        Utilidades.devolucion=new Devolucion();
     }
 
+    /**
+     * Inictialize a user interface
+     */
     private void initializeUI(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,6 +68,9 @@ public class DevolucionActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, cabeceraFragment).commit();
     }
 
+    /**
+     *Catch when the back button pressed
+     */
     @Override
     public void onBackPressed() {
         if (!searchView.isIconified()) {
@@ -67,32 +80,50 @@ public class DevolucionActivity extends AppCompatActivity {
                 finish();
             }
             else{
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
-                actualFragment=0;
+                lineaFragment.perderCambios();
             }
            // super.onBackPressed();
         }
     }
 
+    /**
+     * Return from frgament line to fragment devolution
+     */
+    public void volver(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
+        actualFragment=0;
+    }
+
+    /**
+     * The actionbar options
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            //When pressed a left button of the actionbar
             case android.R.id.home:{
                 if(actualFragment==0){
                     finish();
                 }
                 else{
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
-                    actualFragment=0;
+                    //If are in a fragmet line chek if have changes without save
+                    lineaFragment.perderCambios();
                 }
                 break;
             }
             case R.id.menu_save:{
+                //Save a data
                 if(actualFragment==0){
-
+                    cabeceraFragment.guardar();
                 }
                 else{
-
+                    if(lineaFragment.guardar()){
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
+                        actualFragment=0;
+                        cabeceraFragment.refresh();
+                    }
                 }
             }
         }
@@ -125,6 +156,11 @@ public class DevolucionActivity extends AppCompatActivity {
                 return false;
             }
 
+            /**
+             * Event when the autocomplet suggestion is selected
+             * @param position
+             * @return
+             */
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor=(Cursor)searchAdapter.getItem(position);
@@ -147,6 +183,12 @@ public class DevolucionActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Actions when return this activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -158,6 +200,10 @@ public class DevolucionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get and show data to autocomplet widget
+     * @param query
+     */
     private void updateSearchSuggestion(String query){
         if(this.actualFragment==0) {
             String campo1= ClienteDB.COLS_CLIENTE[0];
@@ -179,7 +225,10 @@ public class DevolucionActivity extends AppCompatActivity {
         }
     }
 
-    public void abrirLinea(){
+    /**
+     * Hide the search actionbar and chage from cabeceraFragment to lineaFragment
+     */
+    public void abrirLineaNueva(){
         if (!searchView.isIconified()) {
             searchView.onActionViewCollapsed();
         }
@@ -188,6 +237,10 @@ public class DevolucionActivity extends AppCompatActivity {
         actualFragment=1;
     }
 
+    /**
+     * Extract data of barcode and ahow in the line fragment
+     * @param codigoBarras
+     */
     private void procesarCodigoBarras(String codigoBarras){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(self);
         boolean comporbar_barcode= prefs.getBoolean("check_barcode",false);
@@ -200,8 +253,6 @@ public class DevolucionActivity extends AppCompatActivity {
         String fecha=codigoBarras.substring(18,24);
         String p3_3=codigoBarras.substring(24,26);
         String lote=codigoBarras.substring(26);
-
-        Log.e("BARCODE",empresa+"  "+codigo+"  "+lote+"   "+codigo_empresa);
 
         if(comporbar_barcode && !empresa.equals(codigo_empresa)){
             Utilidades.Alerts(this,null,self.getResources().getString(R.string.error_barcode_company),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
@@ -222,10 +273,6 @@ public class DevolucionActivity extends AppCompatActivity {
             lineaFragment.actualizarLinea(codigo,articulo.getNombre(),articulo.getUmv(),lote,caducidad);
 
         }
-
-
-
-
     }
 
 

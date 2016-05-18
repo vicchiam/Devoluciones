@@ -116,6 +116,11 @@ public class ClienteDB extends SQLiteOpenHelper {
         return new Cliente(codigo, nombre);
     }
 
+    /**
+     * Insert or update a custome in database
+     * @param codigo
+     * @param nombre
+     */
     public void reemplazar(int codigo, String nombre){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
@@ -124,6 +129,10 @@ public class ClienteDB extends SQLiteOpenHelper {
         db.replace(TABLE_NAME_CLIENTE,null,cv);
     }
 
+    /**
+     * Deleta a customer in database
+     * @param codigo
+     */
     public void eliminar(int codigo){
         SQLiteDatabase db=this.getWritableDatabase();
         db.delete(TABLE_NAME_CLIENTE,"codigo="+codigo,null);

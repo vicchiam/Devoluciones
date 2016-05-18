@@ -29,6 +29,7 @@
     <string name="conn_err">Error al conectar con el servidor intentelo más tarde</string>
     <string name="database_err">Error en la base de datos</string>
     <string name="error_barcode_company">La etiqueta no pertenece a la compania</string>
+    <string name="descartar_cambios">¿Seguro que quieres descartar los cambios?</string>
 
     <!-- PROGRESO ****************************************************************************** -->
     <string name="progress_title">Espere</string>
@@ -48,6 +49,9 @@
     <string name="linea_umv">UMV</string>
     <string name="linea_lote">Lote</string>
     <string name="linea_caducidad">Caducidad (Pulsar aquí para abrir calendario)</string>
+
+    <string name="linea_e_codigo">Debes indicar un código</string>
+    <string name="linea_e_cantidad">Debes indicar una cantidad</string>
 
     <!-- MENU DEVOLUCION********************************************************************************* -->
     <string name="buscar">Buscar</string>

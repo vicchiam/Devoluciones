@@ -13,7 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by vicch on 11/05/2016.
+ * Created by vicchiam on 11/05/2016.
+ * Make a class to make operation to database in async mode
  */
 public class DBAsyncTask {
 
@@ -24,6 +25,12 @@ public class DBAsyncTask {
     private boolean forzar;
     private int tipo;
 
+    /**
+     * Constructor
+     * @param activity Parent activity
+     * @param respuestaServidor Object that to recieve a response of task
+     * @param tipo Type of operation
+     */
     public DBAsyncTask(Activity activity, RespuestaServidor respuestaServidor, int tipo){
         this.activity=activity;
         this.respuestaServidor=respuestaServidor;
@@ -33,12 +40,20 @@ public class DBAsyncTask {
         this.forzar=false;
     }
 
+    /**
+     * Methot that start a process of save data in database
+     * @param json
+     * @param forzar
+     */
     public void guardar(String json, boolean forzar){
         MyAsyncTask mat=new MyAsyncTask(activity);
         this.forzar=forzar;
         mat.execute(json);
     }
 
+    /**
+     * Class that make a async task
+     */
     private class MyAsyncTask extends AsyncTask<String,Void,Integer> {
 
         private Activity activity;
@@ -57,6 +72,11 @@ public class DBAsyncTask {
             this.dialog.show();
         }
 
+        /**
+         * Save data in a database
+         * @param params A string json
+         * @return A number of results
+         */
         @Override
         protected Integer doInBackground(String... params) {
             String json=params[0];
@@ -110,6 +130,10 @@ public class DBAsyncTask {
             return count;
         }
 
+        /**
+         * Get the final result and pass to the objecr RespuestaServidor
+         * @param respuesta
+         */
         @Override
         protected void onPostExecute(final Integer respuesta) {
             if (dialog.isShowing()) {

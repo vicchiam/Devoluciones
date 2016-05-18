@@ -14,19 +14,24 @@ import android.util.Log;
 import android.view.View;
 
 import com.pcs.vicchiam.devoluciones.R;
+import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by vicch on 05/05/2016.
+ * Created by vicchiam on 05/05/2016.
  * Static clase to make the alerts and checks
  */
 public class Utilidades {
 
+    //Devolucion
+    public static Devolucion devolucion;
+
     public static final int TIPO_ADVERTENCIA_NEUTRAL=0;
     public static final int TIPO_ADVERTENCIA_CONFIGURACION=1;
+    public static final int TIPO_ADVERTENCIA_SI_NO=2;
 
     //Connection
     public static final int ERROR_BASE_DATOS=-2;
@@ -88,12 +93,32 @@ public class Utilidades {
                         .show();
                 break;
             }
+            case TIPO_ADVERTENCIA_SI_NO:{
+                new AlertDialog.Builder(activity)
+                        .setTitle(title)
+                        .setMessage(mensaje)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("Descartar",onClickListener)
+                        .show();
+                break;
+            }
             default:{
 
             }
         }
     }
 
+    /**
+     * Make a snackbar
+     * @param activity parent activity on this is show
+     * @param mensaje the message that show
+     */
     public static void crearSnackBar(Activity activity,String mensaje){
         View v=activity.findViewById(android.R.id.content);
         Snackbar.make(v,mensaje, Snackbar.LENGTH_LONG).show();
@@ -140,6 +165,11 @@ public class Utilidades {
         return d;
     }
 
+    /**
+     * Convert date in string
+     * @param d date to convert
+     * @return a string with the date
+     */
     public static String fechaCadena(Date d){
         SimpleDateFormat f=new SimpleDateFormat("dd/MM/yyyy");
         String s=null;
@@ -147,6 +177,11 @@ public class Utilidades {
         return s;
     }
 
+    /**
+     * Check if a string is a number
+     * @param text
+     * @return
+     */
     public static boolean esNumero(String text){
         for (char c : text.toCharArray())
         {
