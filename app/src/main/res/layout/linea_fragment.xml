@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="match_parent"
+    android:background="@color/my_white">
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,7 +30,8 @@
                 android:id="@+id/lbl_codigo_art"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
                 android:layout_toRightOf="@+id/img_codigo_art"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/my_secondary_text"
@@ -44,16 +46,6 @@
                 android:layout_marginRight="10dp"
                 android:layout_toRightOf="@+id/img_codigo_art"
                 android:layout_below="@+id/lbl_codigo_art"/>
-
-            <ImageButton
-                android:id="@+id/imgbtn_barcode_art"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:padding="2dp"
-                android:src="@drawable/ic_barcode"
-                android:layout_margin="5dp"
-                android:background="@android:color/transparent"/>
 
         </RelativeLayout>
 
@@ -76,7 +68,8 @@
                 android:id="@+id/lbl_descr_art"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
                 android:layout_toRightOf="@+id/img_descr_art"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/my_secondary_text"
@@ -118,7 +111,8 @@
                     android:id="@+id/lbl_cantidad_art"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
                     android:layout_toRightOf="@+id/img_cantidad_art"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/my_secondary_text"
@@ -155,6 +149,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/my_primary_text"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
                     android:layout_marginRight="10dp"
                     android:layout_below="@+id/lbl_umv_art"/>
 
@@ -181,7 +177,8 @@
                 android:id="@+id/lbl_lote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
                 android:layout_toRightOf="@+id/img_lote"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/my_secondary_text"
@@ -218,7 +215,8 @@
                 android:id="@+id/lbl_caducidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
                 android:layout_toRightOf="@+id/img_caducidad"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/my_secondary_text"

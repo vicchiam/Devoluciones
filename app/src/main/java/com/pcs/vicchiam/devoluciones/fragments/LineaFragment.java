@@ -6,13 +6,11 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,13 +29,12 @@ import java.util.Calendar;
  */
 public class LineaFragment extends Fragment {
 
-    private DevolucionActivity self;
+    private DevolucionActivity devolucionActivity;
     private EditText editCodigo, editNombre,editCantidad, editUmv, editLote;
-    private ImageButton imgButtonBarcode;
     private TextView textCaducidad;
     private ImageView imgCaducidad;
     private RelativeLayout layoutCaducidad;
-    private long id;
+    private int position;
     private Linea linea;
 
     /**
@@ -62,11 +59,13 @@ public class LineaFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        position=-1;
         if(context instanceof DevolucionActivity){
-            self=(DevolucionActivity) context;
+            devolucionActivity =(DevolucionActivity) context;
         }
-        if(getArguments()!=null && getArguments().containsKey("id")){
-            id=getArguments().getLong("id");
+        if(getArguments()!=null && getArguments().containsKey("pos")){
+            position=getArguments().getInt("pos");
+            linea=Utilidades.devolucion.getLineas().get(position);
         }
         else{
             linea=new Linea();
@@ -87,15 +86,6 @@ public class LineaFragment extends Fragment {
         editUmv=(EditText)view.findViewById(R.id.edit_umv_art);
         editLote=(EditText)view.findViewById(R.id.edit_lote);
         textCaducidad=(TextView)view.findViewById(R.id.edit_caducidad);
-        imgButtonBarcode=(ImageButton)view.findViewById(R.id.imgbtn_barcode_art);
-        imgButtonBarcode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentIntegrator integrator = new IntentIntegrator(self);
-                integrator.setOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                integrator.initiateScan();
-            }
-        });
         layoutCaducidad=(RelativeLayout)view.findViewById(R.id.content_caducidad);
         layoutCaducidad.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,16 +94,26 @@ public class LineaFragment extends Fragment {
                 final int year = c.get(Calendar.YEAR);
                 final int month = c.get(Calendar.MONTH);
                 final int day = c.get(Calendar.DAY_OF_MONTH);
-                new DatePickerDialog(self, myDateListener, year+2, month, day).show();
+                new DatePickerDialog(devolucionActivity, myDateListener, year+2, month, day).show();
             }
         });
+        llenarLinea();
         return view;
     }
 
     @Override
     public void onDetach() {
-        self = null;
+        devolucionActivity = null;
         super.onDetach();
+    }
+
+    /**
+     * Start scan barcode activity
+     */
+    public void abrirBarcode(){
+        IntentIntegrator integrator = new IntentIntegrator(devolucionActivity);
+        integrator.setOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        integrator.initiateScan();
     }
 
     /**
@@ -149,15 +149,18 @@ public class LineaFragment extends Fragment {
     public boolean guardar(){
         this.linea=leerLinea();
         if(linea.getCodigo().equals("")){
-            Utilidades.Alerts(self,null,getResources().getString(R.string.linea_e_codigo),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+            Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.linea_e_codigo),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
             return false;
         }
         if(linea.getCantidad()==-1){
-            Utilidades.Alerts(self,null,getResources().getString(R.string.linea_e_cantidad),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+            Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.linea_e_cantidad),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
             return false;
         }
-        if(this.id==0){
+        if(this.position==-1){
             Utilidades.devolucion.setLinea(linea);
+        }
+        else{
+            Utilidades.devolucion.replace(linea,position);
         }
         return true;
     }
@@ -167,14 +170,16 @@ public class LineaFragment extends Fragment {
      */
     public void perderCambios(){
         Linea nueva=leerLinea();
-        Log.e("EEEE",nueva.equals(this.linea)+"");
-        if(!nueva.comprobarCambios(linea)){
-            Utilidades.Alerts(self,null,getResources().getString(R.string.descartar_cambios),Utilidades.TIPO_ADVERTENCIA_SI_NO, new DialogInterface.OnClickListener(){
+        if(nueva.tieneCambios(linea)){
+            Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.descartar_cambios),Utilidades.TIPO_ADVERTENCIA_SI_NO, new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    self.volver();
+                    devolucionActivity.cambiarFragment();
                 }
             });
+        }
+        else {
+            devolucionActivity.cambiarFragment();
         }
     }
 
@@ -195,6 +200,21 @@ public class LineaFragment extends Fragment {
         String lote=editLote.getText().toString();
         String fecha=textCaducidad.getText().toString();
         return new Linea(codigo,nombre,cantidad,umv,lote,fecha);
+    }
+
+    /**
+     * Fill all fileds with a existent line
+     */
+    private void llenarLinea(){
+        editCodigo.setText(linea.getCodigo());
+        editNombre.setText(linea.getNombre());
+        String cantidad="";
+        if(linea.getCantidad()>=0)
+            cantidad=linea.getCantidad()+"";
+        editCantidad.setText(cantidad);
+        editUmv.setText(linea.getUmv());
+        editLote.setText(linea.getLote());
+        textCaducidad.setText(linea.getFecha());
     }
 
     /**

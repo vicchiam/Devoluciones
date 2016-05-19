@@ -49,6 +49,7 @@
     <string name="linea_umv">UMV</string>
     <string name="linea_lote">Lote</string>
     <string name="linea_caducidad">Caducidad (Pulsar aquí para abrir calendario)</string>
+    <string name="linea_guardada">Linea guardada correctamente</string>
 
     <string name="linea_e_codigo">Debes indicar un código</string>
     <string name="linea_e_cantidad">Debes indicar una cantidad</string>

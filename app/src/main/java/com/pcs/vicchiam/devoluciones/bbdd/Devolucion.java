@@ -112,6 +112,11 @@ public class Devolucion {
         lineas.add(linea);
     }
 
+    public void replace(Linea linea, int pos){
+        lineas.remove(pos);
+        lineas.add(pos,linea);
+    }
+
     public void setAdjunto(Adjunto a){
         adjuntos.add(a);
     }

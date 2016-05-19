@@ -2,16 +2,18 @@ package com.pcs.vicchiam.devoluciones;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.pcs.vicchiam.devoluciones.utilidades.Logica;
 
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private CoordinatorLayout coordinatorLayout;
     private MainActivity self;
 
     private Logica logica;
@@ -51,33 +54,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab=(FloatingActionButton)findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(self,DevolucionActivity.class);
-                self.startActivity(intent);
-            }
-        });
-
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         //Initializing NavigationView
         navigationView = (NavigationView) findViewById(R.id.navigation);
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(self);
+
+        coordinatorLayout=(CoordinatorLayout)findViewById(R.id.clayout);
+
     }
 
     /*MENU*******************************************************************************************/
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        Log.e("MENU","MENU");
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case android.R.id.home: {
                 drawerLayout.openDrawer(GravityCompat.START);
-                return true;
+                break;
+            }
+            case R.id.menu_nuevo: {
+                Intent intent=new Intent(self,DevolucionActivity.class);
+                self.startActivity(intent);
+                break;
+            }
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     /**
@@ -146,7 +156,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         logica=Logica.getInstance(self);
     }
 
-
+    public CoordinatorLayout getCoordinatorLayout(){
+        return this.coordinatorLayout;
+    }
 
 
 }

@@ -5,14 +5,14 @@
     tools:context="com.pcs.vicchiam.devoluciones.DevolucionActivity">
 
     <item
-        android:id="@+id/menu_search"
+        android:id="@+id/menu_search_devol"
         android:title="@string/buscar"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/menu_save"
-        android:icon="@drawable/ic_save_white_24dp"
+        android:id="@+id/menu_nuevo_devol"
+        android:icon="@drawable/ic_add_white_24dp"
         android:title="@string/guardar"
         app:showAsAction="always"/>
 

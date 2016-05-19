@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pcs.vicchiam.devoluciones.R;
-import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
 import com.pcs.vicchiam.devoluciones.bbdd.Linea;
 
 import java.util.List;
@@ -51,15 +50,19 @@ public class ItemLineaAdapter extends BaseAdapter {
             // Create a new view into the list.
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.list_item_devol, parent, false);
+            rowView = inflater.inflate(R.layout.list_item_linea, parent, false);
         }
 
-        ImageView ivItem = (ImageView) rowView.findViewById(R.id.ivItem);
-        TextView textView = (TextView) rowView.findViewById(R.id.tvTitle);
+        TextView tCodigo = (TextView) rowView.findViewById(R.id.tCodigo);
+        TextView tNombre=(TextView) rowView.findViewById(R.id.tNombre);
+        TextView tCantidad=(TextView) rowView.findViewById(R.id.tCantidad);
+        TextView tLote=(TextView) rowView.findViewById(R.id.tLote);
 
         Linea linea=this.lineas.get(position);
-        textView.setText(linea.getNombre());
-
+        tCodigo.setText(linea.getCodigo());
+        tNombre.setText(linea.getNombre());
+        tCantidad.setText(linea.getCantidad()+" "+linea.getUmv());
+        tLote.setText(linea.getLote());
 
         return rowView;
     }

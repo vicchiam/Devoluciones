@@ -3,9 +3,11 @@ package com.pcs.vicchiam.devoluciones.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,9 +23,8 @@ import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
  */
 public class CabeceraFragment extends Fragment {
 
-    private DevolucionActivity activity;
+    private DevolucionActivity devolucionActivity;
     private EditText editCodigo, editRazon;
-    private Button nuevaLinea;
     private ItemLineaAdapter itemLineaAdapter;
     private ListView listView;
 
@@ -50,7 +51,7 @@ public class CabeceraFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if(context instanceof DevolucionActivity){
-            activity=(DevolucionActivity) context;
+            devolucionActivity =(DevolucionActivity) context;
         }
     }
 
@@ -64,22 +65,24 @@ public class CabeceraFragment extends Fragment {
         View view=inflater.inflate(R.layout.devolucion_fragment,container,false);
         editCodigo=(EditText) view.findViewById(R.id.edit_codigo);
         editRazon=(EditText) view.findViewById(R.id.edit_razon);
-        nuevaLinea=(Button) view.findViewById(R.id.btn_nueva_linea);
-        nuevaLinea.setOnClickListener(new View.OnClickListener() {
+
+        listView=(ListView) view.findViewById(R.id.list_lineas);
+        itemLineaAdapter=new ItemLineaAdapter(devolucionActivity, Utilidades.devolucion.getLineas());
+        listView.setAdapter(itemLineaAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                activity.abrirLineaNueva();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Bundle bundle=new Bundle();
+                bundle.putInt("pos",position);
+                devolucionActivity.abrirLinea(bundle);
             }
         });
-        listView=(ListView) view.findViewById(R.id.list_lineas);
-        itemLineaAdapter=new ItemLineaAdapter(activity, Utilidades.devolucion.getLineas());
-        listView.setAdapter(itemLineaAdapter);
         return view;
     }
 
     @Override
     public void onDetach() {
-        activity = null;
+        devolucionActivity = null;
         super.onDetach();
     }
 

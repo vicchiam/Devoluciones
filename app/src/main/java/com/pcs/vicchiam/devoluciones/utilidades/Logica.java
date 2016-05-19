@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.pcs.vicchiam.devoluciones.MainActivity;
 import com.pcs.vicchiam.devoluciones.PreferenciasBarActivity;
 import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
@@ -31,7 +32,7 @@ public class Logica implements RespuestaServidor {
 
     private static Logica instancia;
 
-    private Activity activity;
+    private MainActivity mainActivity;
     private String recurso;
     private ClienteDB clienteDB;
     private ArticuloDB articuloDB;
@@ -39,19 +40,19 @@ public class Logica implements RespuestaServidor {
 
     ProgressDialog progressDialog;
 
-    public static Logica getInstance(Activity activity){
+    public static Logica getInstance(MainActivity mainActivity){
         if(instancia==null){
-            instancia=new Logica(activity);
+            instancia=new Logica(mainActivity);
         }
         return instancia;
     }
 
     /**
      * Constructor of class Logica
-     * @param activity the parent activity
+     * @param mainActivity the parent activity
      */
-    public Logica(Activity activity){
-        this.activity=activity;
+    public Logica(MainActivity mainActivity){
+        this.mainActivity=mainActivity;
         //comprobarRecursos();
         inicializarDatabase();
         obtenerDatos(false);
@@ -61,9 +62,9 @@ public class Logica implements RespuestaServidor {
      * Create all objects tha represent a database tables
      */
     public void inicializarDatabase(){
-        clienteDB=new ClienteDB(this.activity);
-        articuloDB=new ArticuloDB(this.activity);
-        devolucionDB=new DevolucionDB(this.activity);
+        clienteDB=new ClienteDB(this.mainActivity);
+        articuloDB=new ArticuloDB(this.mainActivity);
+        devolucionDB=new DevolucionDB(this.mainActivity);
     }
 
     /**
@@ -71,31 +72,31 @@ public class Logica implements RespuestaServidor {
      */
     public boolean comprobarRecursos(){
         //Get the preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        String miWifi=prefs.getString("ssid",activity.getResources().getString(R.string.wifi_defecto));
-        String servidor=prefs.getString("servidor",activity.getResources().getString(R.string.servidor_defecto));
-        String servicio=prefs.getString("servicio",activity.getResources().getString(R.string.servicio_defecto));
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        String miWifi=prefs.getString("ssid",mainActivity.getResources().getString(R.string.wifi_defecto));
+        String servidor=prefs.getString("servidor",mainActivity.getResources().getString(R.string.servidor_defecto));
+        String servicio=prefs.getString("servicio",mainActivity.getResources().getString(R.string.servicio_defecto));
 
         //Check if wifi preference is right
         if(miWifi.equals("")){
-            Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.no_wifi_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
+            Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.no_wifi_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    Intent intent=new Intent(activity, PreferenciasBarActivity.class);
-                    activity.startActivity(intent);
+                    Intent intent=new Intent(mainActivity, PreferenciasBarActivity.class);
+                    mainActivity.startActivity(intent);
                 }
             });
             return false;
         }
         //Check if the server preference is rigth
         if(servidor.equals("")){
-            Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.no_servidor_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
+            Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.no_servidor_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    Intent intent=new Intent(activity, PreferenciasBarActivity.class);
-                    activity.startActivity(intent);
+                    Intent intent=new Intent(mainActivity, PreferenciasBarActivity.class);
+                    mainActivity.startActivity(intent);
                 }
             });
             return false;
@@ -103,20 +104,20 @@ public class Logica implements RespuestaServidor {
 
         //Check if the service preference is right
         if(servicio.equals("")){
-            Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.no_servicio_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
+            Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.no_servicio_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    Intent intent=new Intent(activity, PreferenciasBarActivity.class);
-                    activity.startActivity(intent);
+                    Intent intent=new Intent(mainActivity, PreferenciasBarActivity.class);
+                    mainActivity.startActivity(intent);
                 }
             });
             return false;
         }
 
         //Check if the WIFI ssid is the same that on the preferences
-        if(!Utilidades.Wifi(this.activity,miWifi)) {
-            Utilidades.Alerts(activity, null, activity.getResources().getString(R.string.no_wifi_conn, miWifi), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);
+        if(!Utilidades.Wifi(this.mainActivity,miWifi)) {
+            Utilidades.Alerts(mainActivity, null, mainActivity.getResources().getString(R.string.no_wifi_conn, miWifi), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);
             return false;
         }
 
@@ -138,7 +139,7 @@ public class Logica implements RespuestaServidor {
 
         //Check if date in preferences is greater than now
         String ahora = Utilidades.fechaCadena(new Date());
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         String ultimaActualizacion = prefs.getString("ultima_actualizacion", "01/01/1990");
         if(forzar){
             ultimaActualizacion="01/01/1990";
@@ -165,7 +166,7 @@ public class Logica implements RespuestaServidor {
      * @param tipo
      */
     private void obtenerClientes(int tipo){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
 
         //Update the customers
@@ -173,7 +174,7 @@ public class Logica implements RespuestaServidor {
         hashMap.put("operacion","obtener_clientes_mod");
         hashMap.put("fecha",fecha);
 
-        Conexion conn = new Conexion(this.activity, this, this.recurso, tipo);
+        Conexion conn = new Conexion(this.mainActivity, this, this.recurso, tipo);
         conn.execute(hashMap);
     }
 
@@ -182,7 +183,7 @@ public class Logica implements RespuestaServidor {
      * @param tipo
      */
     private void obtenerArticulos(int tipo){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
 
         //Update the customers
@@ -190,7 +191,7 @@ public class Logica implements RespuestaServidor {
         hashMap.put("operacion","obtener_articulos_mod");
         hashMap.put("fecha",fecha);
 
-        Conexion conn = new Conexion(this.activity, this, this.recurso,tipo);
+        Conexion conn = new Conexion(this.mainActivity, this, this.recurso,tipo);
         conn.execute(hashMap);
     }
 
@@ -203,47 +204,47 @@ public class Logica implements RespuestaServidor {
     public void respuesta(int tipo,String respuesta) {
         switch (tipo){
             case Utilidades.ERROR_BASE_DATOS:{
-                Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.database_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.database_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
                 break;
             }
             case Utilidades.ERROR_CONEXION:{
-                Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.conn_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.conn_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
                 break;
             }
             case Utilidades.OBTENER_CLIENTES_NUEVO:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this,Utilidades.FINALIZAR_CLIENTES_NUEVO);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this,Utilidades.FINALIZAR_CLIENTES_NUEVO);
                 dbAsyncTask.guardar(respuesta,true);
                 break;
             }
             case Utilidades.OBTENER_CLIENTES_ACTUALIZAR:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this, Utilidades.FINALIZAR_CLIENTES_ACTUALIZAR);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_CLIENTES_ACTUALIZAR);
                 dbAsyncTask.guardar(respuesta,false);
                 break;
             }
             case Utilidades.OBTENER_ARTICULOS_NUEVO:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this, Utilidades.FINALIZAR_ARTICULOS);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_ARTICULOS);
                 dbAsyncTask.guardar(respuesta,true);
                 break;
             }
             case Utilidades.OBTENER_ARTICULOS_ACTUALIZAR:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(activity,this, Utilidades.FINALIZAR_ARTICULOS);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_ARTICULOS);
                 dbAsyncTask.guardar(respuesta,false);
             }
             case Utilidades.FINALIZAR_CLIENTES_NUEVO:{
-                Utilidades.crearSnackBar(activity, activity.getResources().getString(R.string.num_clientes,respuesta));
+                Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(), mainActivity.getResources().getString(R.string.num_clientes,respuesta));
                 obtenerArticulos(Utilidades.OBTENER_ARTICULOS_NUEVO);
                 break;
             }
             case Utilidades.FINALIZAR_CLIENTES_ACTUALIZAR:{
-                Utilidades.crearSnackBar(activity, activity.getResources().getString(R.string.num_clientes,respuesta));
+                Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(), mainActivity.getResources().getString(R.string.num_clientes,respuesta));
                 obtenerArticulos(Utilidades.OBTENER_ARTICULOS_ACTUALIZAR);
                 break;
             }
             case Utilidades.FINALIZAR_ARTICULOS:{
-                Utilidades.crearSnackBar(activity, activity.getResources().getString(R.string.num_articulos,respuesta));
+                Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(), mainActivity.getResources().getString(R.string.num_articulos,respuesta));
 
                 String ahora = Utilidades.fechaCadena(new Date());
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
                 SharedPreferences.Editor editor=prefs.edit();
                 editor.putString("ultima_actualizacion",ahora);
                 editor.commit();
@@ -278,7 +279,7 @@ public class Logica implements RespuestaServidor {
                     clienteDB.reemplazar(codigo,nombre);
                 }
             }
-            Utilidades.crearSnackBar(activity,"Clientes actualizados "+jsonArray.length());
+            Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(),"Clientes actualizados "+jsonArray.length());
         } catch (JSONException e) {
             e.printStackTrace();
         }

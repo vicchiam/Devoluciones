@@ -10,6 +10,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 
@@ -116,12 +117,11 @@ public class Utilidades {
 
     /**
      * Make a snackbar
-     * @param activity parent activity on this is show
+     * @param view parent view on this is show
      * @param mensaje the message that show
      */
-    public static void crearSnackBar(Activity activity,String mensaje){
-        View v=activity.findViewById(android.R.id.content);
-        Snackbar.make(v,mensaje, Snackbar.LENGTH_LONG).show();
+    public static void crearSnackBar(View view, String mensaje){
+        Snackbar.make(view,mensaje, Snackbar.LENGTH_LONG).show();
     }
 
     /**

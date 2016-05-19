@@ -23,7 +23,7 @@ public class Linea {
         this.id=0;
         this.codigo = "";
         this.nombre = "";
-        this.cantidad = 0;
+        this.cantidad = -1;
         this.umv = "";
         this.lote = "";
         this.fecha = "";
@@ -118,15 +118,15 @@ public class Linea {
 
     }
 
-    public boolean comprobarCambios(Linea nueva){
-        if(this.getId()!=nueva.getId()) return false;
-        if(!this.getCodigo().equals(nueva.getCodigo())) return false;
-        if(!this.getNombre().equals(nueva.getNombre())) return false;
-        if(this.getCantidad()!=nueva.getCantidad()) return false;
-        if(!this.getUmv().equals(nueva.getUmv())) return false;
-        if(!this.getLote().equals(nueva.getLote())) return false;
-        if(!this.getFecha().equals(nueva.getFecha())) return false;
-        return true;
+    public boolean tieneCambios(Linea nueva){
+        if(this.getId()!=nueva.getId()) return true;
+        if(!this.getCodigo().equals(nueva.getCodigo())) return true;
+        if(!this.getNombre().equals(nueva.getNombre())) return true;
+        if(this.getCantidad()!=nueva.getCantidad()) return true;
+        if(!this.getUmv().equals(nueva.getUmv())) return true;
+        if(!this.getLote().equals(nueva.getLote())) return true;
+        if(!this.getFecha().equals(nueva.getFecha())) return true;
+        return false;
     }
 
 }

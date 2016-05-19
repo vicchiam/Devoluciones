@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight">
+
+    <ImageView
+        android:id="@+id/img_devol"
+        android:layout_width="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:src="@drawable/ic_label_outline_black_24dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="15dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/img_devol"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tCodigo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="false" />
+
+        <TextView
+            android:id="@+id/tCantidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_weight="3"
+            android:textIsSelectable="false"/>
+
+        <TextView
+            android:id="@+id/tLote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_weight="3"
+            android:textIsSelectable="false"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textColor="@color/my_secondary_text"
+        android:layout_toRightOf="@+id/img_devol"
+        android:layout_alignParentBottom="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textIsSelectable="false"
+        android:padding="5dp"
+        android:layout_marginTop="10dp"/>
+
+</RelativeLayout>

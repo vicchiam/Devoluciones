@@ -1,10 +1,13 @@
 package com.pcs.vicchiam.devoluciones;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -13,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -34,11 +39,15 @@ import java.util.List;
 public class DevolucionActivity extends AppCompatActivity {
 
     private DevolucionActivity self;
+    private CoordinatorLayout coordinatorLayout;
+    private FloatingActionButton fab;
+    private Menu menu;
     private SearchSuggestionAdapter searchAdapter;
     private SearchView searchView;
     private CabeceraFragment cabeceraFragment;
     private LineaFragment lineaFragment;
     private int actualFragment;
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,8 @@ public class DevolucionActivity extends AppCompatActivity {
         initializeUI();
 
         Utilidades.devolucion=new Devolucion();
+
+        id=0;
     }
 
     /**
@@ -64,6 +75,16 @@ public class DevolucionActivity extends AppCompatActivity {
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);
         ab.setDisplayHomeAsUpEnabled(true);
+
+        fab=(FloatingActionButton)findViewById(R.id.fab_devol);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guardar();
+            }
+        });
+
+        this.coordinatorLayout=(CoordinatorLayout)findViewById(R.id.clayout_devol);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, cabeceraFragment).commit();
     }
@@ -82,16 +103,7 @@ public class DevolucionActivity extends AppCompatActivity {
             else{
                 lineaFragment.perderCambios();
             }
-           // super.onBackPressed();
         }
-    }
-
-    /**
-     * Return from frgament line to fragment devolution
-     */
-    public void volver(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
-        actualFragment=0;
     }
 
     /**
@@ -113,17 +125,12 @@ public class DevolucionActivity extends AppCompatActivity {
                 }
                 break;
             }
-            case R.id.menu_save:{
-                //Save a data
+            case R.id.menu_nuevo_devol:{
                 if(actualFragment==0){
-                    cabeceraFragment.guardar();
+                    abrirLinea(null);
                 }
                 else{
-                    if(lineaFragment.guardar()){
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
-                        actualFragment=0;
-                        cabeceraFragment.refresh();
-                    }
+                    lineaFragment.abrirBarcode();
                 }
             }
         }
@@ -134,7 +141,8 @@ public class DevolucionActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_devolucion, menu);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        this.menu=menu;
+        searchView = (SearchView) menu.findItem(R.id.menu_search_devol).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -226,15 +234,51 @@ public class DevolucionActivity extends AppCompatActivity {
     }
 
     /**
-     * Hide the search actionbar and chage from cabeceraFragment to lineaFragment
+     * Change the fragments
      */
-    public void abrirLineaNueva(){
+    public void cambiarFragment(){
         if (!searchView.isIconified()) {
             searchView.onActionViewCollapsed();
         }
-        lineaFragment=LineaFragment.newInstance(null);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
-        actualFragment=1;
+        if(this.actualFragment==0){
+            menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_monochrome_photos_white_24dp));
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
+            actualFragment=1;
+        }
+        else{
+            menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp));
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
+            actualFragment=0;
+        }
+    }
+
+    /**
+     * Save the actual fragment
+     */
+    private void guardar(){
+        //Save a data
+        if(actualFragment==0){
+            cabeceraFragment.guardar();
+        }
+        else{
+            if(lineaFragment.guardar()){
+                Utilidades.crearSnackBar(this.coordinatorLayout,getResources().getString(R.string.linea_guardada));
+                cambiarFragment();
+                cabeceraFragment.refresh();
+            }
+        }
+
+        //Hide keyboard
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(coordinatorLayout.getWindowToken(), 0);
+    }
+
+    /**
+     * Create a new lineaFragment
+     */
+    public void abrirLinea(Bundle bundle){
+        lineaFragment=LineaFragment.newInstance(bundle);
+        cambiarFragment();
     }
 
     /**
