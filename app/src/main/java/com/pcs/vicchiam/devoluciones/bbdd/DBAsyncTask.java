@@ -22,7 +22,6 @@ public class DBAsyncTask {
     private RespuestaServidor respuestaServidor;
     private ClienteDB clienteDB;
     private ArticuloDB articuloDB;
-    private boolean forzar;
     private int tipo;
 
     /**
@@ -37,17 +36,14 @@ public class DBAsyncTask {
         this.tipo=tipo;
         clienteDB=new ClienteDB(activity);
         articuloDB=new ArticuloDB(activity);
-        this.forzar=false;
     }
 
     /**
      * Methot that start a process of save data in database
      * @param json
-     * @param forzar
      */
-    public void guardar(String json, boolean forzar){
+    public void guardar(String json){
         MyAsyncTask mat=new MyAsyncTask(activity);
-        this.forzar=forzar;
         mat.execute(json);
     }
 
@@ -84,7 +80,7 @@ public class DBAsyncTask {
             try {
                 JSONObject jsonObject=new JSONObject(json);
                 if(jsonObject.has("clientes")){
-                    if(forzar){
+                    if(tipo==Utilidades.FINALIZAR_CLIENTES_NUEVO){
                         clienteDB.truncate();
                     }
                     JSONArray jsonArray=jsonObject.getJSONArray("clientes");
@@ -103,7 +99,7 @@ public class DBAsyncTask {
                     count=jsonArray.length();
                 }
                 if(jsonObject.has("articulos")){
-                    if(forzar){
+                    if(tipo==Utilidades.FINALIZAR_ARTICULOS_NUEVO){
                         articuloDB.truncate();
                     }
                     JSONArray jsonArray=jsonObject.getJSONArray("articulos");

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +32,9 @@ public class LineaFragment extends Fragment {
 
     private DevolucionActivity devolucionActivity;
     private EditText editCodigo, editNombre,editCantidad, editUmv, editLote;
-    private TextView textCaducidad;
+    private TextView textCaducidad, textAccion, textMotivo;
     private ImageView imgCaducidad;
-    private RelativeLayout layoutCaducidad;
+    private RelativeLayout layoutCaducidad, layoutAccion, layoutMotivo;
     private int position;
     private Linea linea;
 
@@ -86,7 +87,7 @@ public class LineaFragment extends Fragment {
         editUmv=(EditText)view.findViewById(R.id.edit_umv_art);
         editLote=(EditText)view.findViewById(R.id.edit_lote);
         textCaducidad=(TextView)view.findViewById(R.id.edit_caducidad);
-        layoutCaducidad=(RelativeLayout)view.findViewById(R.id.content_caducidad);
+        layoutCaducidad=(RelativeLayout)view.findViewById(R.id.layoutCaducidadArt);
         layoutCaducidad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,6 +96,61 @@ public class LineaFragment extends Fragment {
                 final int month = c.get(Calendar.MONTH);
                 final int day = c.get(Calendar.DAY_OF_MONTH);
                 new DatePickerDialog(devolucionActivity, myDateListener, year+2, month, day).show();
+            }
+        });
+        textAccion=(TextView)view.findViewById(R.id.texto_accion_art);
+        layoutAccion=(RelativeLayout)view.findViewById(R.id.layoutAccionArt);
+        layoutAccion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] items=getResources().getStringArray(R.array.acciones);
+
+                new AlertDialog.Builder(devolucionActivity)
+                        .setTitle(getResources().getString(R.string.linea_titulo_acciones))
+                        .setItems(items,new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String seleccion=items[which];
+                                if(which==0){
+                                    textAccion.setText("");
+                                }
+                                else {
+                                    textAccion.setText(seleccion);
+                                }
+                            }
+                        })
+                        .show();
+            }
+        });
+        textMotivo=(TextView)view.findViewById(R.id.texto_motivo_art);
+        layoutMotivo=(RelativeLayout)view.findViewById(R.id.layoutMotivoArt);
+        layoutMotivo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(devolucionActivity)
+                        .setTitle(getResources().getString(R.string.linea_titulo_motivo))
+                        .setMessage(getResources().getString(R.string.linea_pregunta_motivo))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton("SI",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                crearMotivo(true);
+                            }
+                        })
+                        .setNegativeButton("NO",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                crearMotivo(false);
+                            }
+                        })
+                        .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+
+                        .show();
             }
         });
         llenarLinea();
@@ -166,11 +222,11 @@ public class LineaFragment extends Fragment {
     }
 
     /**
-     * When exit the fragment check if have some change if have a chage, show a alert dialog
+     * When exit the fragment check if have some change if have a change, show a alert dialog
      */
     public void perderCambios(){
         Linea nueva=leerLinea();
-        if(nueva.tieneCambios(linea)){
+        if(linea.tieneCambios(nueva)){
             Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.descartar_cambios),Utilidades.TIPO_ADVERTENCIA_SI_NO, new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -199,7 +255,9 @@ public class LineaFragment extends Fragment {
         String umv=editUmv.getText().toString();
         String lote=editLote.getText().toString();
         String fecha=textCaducidad.getText().toString();
-        return new Linea(codigo,nombre,cantidad,umv,lote,fecha);
+        String accion=textAccion.getText().toString();
+        String motivo=textMotivo.getText().toString();
+        return new Linea(codigo,nombre,cantidad,umv,lote,fecha,accion,motivo);
     }
 
     /**
@@ -215,6 +273,8 @@ public class LineaFragment extends Fragment {
         editUmv.setText(linea.getUmv());
         editLote.setText(linea.getLote());
         textCaducidad.setText(linea.getFecha());
+        textAccion.setText(linea.getAccion());
+        textMotivo.setText(linea.getMotivo());
     }
 
     /**
@@ -227,5 +287,30 @@ public class LineaFragment extends Fragment {
             textCaducidad.setText(((day<10)?"0"+day:day)+"-"+((month<10)?"0"+month:month)+"-"+year);
         }
     };
+
+    private void crearMotivo(final boolean calidad){
+
+        final String[] items;
+        if(calidad)
+            items=getResources().getStringArray(R.array.calidad);
+        else
+            items=getResources().getStringArray(R.array.no_calidad);
+
+        new AlertDialog.Builder(devolucionActivity)
+                .setTitle(getResources().getString(R.string.linea_titulo_motivo))
+                .setItems(items,new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String seleccion=items[which];
+                        if(!calidad && which==0){
+                            textMotivo.setText("");
+                        }
+                        else {
+                            textMotivo.setText(seleccion);
+                        }
+                    }
+                })
+                .show();
+    }
 
 }

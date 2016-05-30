@@ -3,12 +3,10 @@ package com.pcs.vicchiam.devoluciones.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -21,7 +19,7 @@ import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
  * Created by vicchiam on 07/05/2016.
  * Class that make a fragment with the data of a devolution
  */
-public class CabeceraFragment extends Fragment {
+public class DevolucionFragment extends Fragment {
 
     private DevolucionActivity devolucionActivity;
     private EditText editCodigo, editRazon;
@@ -31,17 +29,17 @@ public class CabeceraFragment extends Fragment {
     /**
      * Create a object Cabecera frgament
      * @param arguments id of the devolution
-     * @return a object CabeceraFragment
+     * @return a object DevolucionFragment
      */
-    public static CabeceraFragment newInstance(Bundle arguments){
-        CabeceraFragment cf=new CabeceraFragment();
+    public static DevolucionFragment newInstance(Bundle arguments){
+        DevolucionFragment cf=new DevolucionFragment();
         if(arguments != null){
             cf.setArguments(arguments);
         }
         return cf;
     }
 
-    public CabeceraFragment(){}
+    public DevolucionFragment(){}
 
     /**
      * When fragment is created get id of the devolution

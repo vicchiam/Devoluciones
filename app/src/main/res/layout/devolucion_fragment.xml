@@ -95,6 +95,7 @@
 
             </RelativeLayout>
 
+            <!--
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -143,7 +144,8 @@
                     android:layout_below="@id/spinner_accion"/>
 
             </RelativeLayout>
-
+            -->
+            <!--
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -181,7 +183,7 @@
                     android:layout_below="@+id/lbl_motivo"/>
 
             </RelativeLayout>
-
+            -->
         </LinearLayout>
 
     </ScrollView>
@@ -189,6 +191,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/my_secondary_text"

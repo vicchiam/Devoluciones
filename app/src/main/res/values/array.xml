@@ -2,10 +2,32 @@
 <resources>
 
     <array name="acciones">
+        <item>Vacio</item>
         <item>Retenido</item>
         <item>Reproceso</item>
         <item>Venta</item>
         <item>Basura</item>
     </array>
-    
+
+    <array name="calidad">
+        <item>TallaA</item>
+        <item>Sabor/Olor/Textura</item>
+        <item>Alerta Sanitaria</item>
+        <item>Problema Microbiologico</item>
+        <item>Materias esxtrañas</item>
+        <item>Falta de peso</item>
+        <item>Calidad baja</item>
+    </array>
+
+    <array name="no_calidad">
+        <item>Vacio</item>
+        <item>Error de carga</item>
+        <item>Error de pedido</item>
+        <item>No lo vende</item>
+        <item>Precio</item>
+        <item>Caducidad cercana</item>
+        <item>Cajas rotas</item>
+        <item>Error etiquetado</item>
+    </array>
+
 </resources>

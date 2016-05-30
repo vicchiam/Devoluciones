@@ -148,10 +148,12 @@ public class Logica implements RespuestaServidor {
             return;
         }
 
+        /*
         //If now is greater than date in preferences update the date of preferences
         SharedPreferences.Editor editor=prefs.edit();
         editor.putString("ultima_actualizacion",ultimaActualizacion);
         editor.commit();
+        */
 
         if(forzar || ultimaActualizacion.equals("01/01/1990")) {
             obtenerClientes(Utilidades.OBTENER_CLIENTES_NUEVO);
@@ -213,22 +215,23 @@ public class Logica implements RespuestaServidor {
             }
             case Utilidades.OBTENER_CLIENTES_NUEVO:{
                 DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this,Utilidades.FINALIZAR_CLIENTES_NUEVO);
-                dbAsyncTask.guardar(respuesta,true);
+                dbAsyncTask.guardar(respuesta);
                 break;
             }
             case Utilidades.OBTENER_CLIENTES_ACTUALIZAR:{
                 DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_CLIENTES_ACTUALIZAR);
-                dbAsyncTask.guardar(respuesta,false);
+                dbAsyncTask.guardar(respuesta);
                 break;
             }
             case Utilidades.OBTENER_ARTICULOS_NUEVO:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_ARTICULOS);
-                dbAsyncTask.guardar(respuesta,true);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_ARTICULOS_NUEVO);
+                dbAsyncTask.guardar(respuesta);
                 break;
             }
             case Utilidades.OBTENER_ARTICULOS_ACTUALIZAR:{
-                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_ARTICULOS);
-                dbAsyncTask.guardar(respuesta,false);
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_ARTICULOS_ACTUALIZAR);
+                dbAsyncTask.guardar(respuesta);
+                break;
             }
             case Utilidades.FINALIZAR_CLIENTES_NUEVO:{
                 Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(), mainActivity.getResources().getString(R.string.num_clientes,respuesta));
@@ -240,7 +243,8 @@ public class Logica implements RespuestaServidor {
                 obtenerArticulos(Utilidades.OBTENER_ARTICULOS_ACTUALIZAR);
                 break;
             }
-            case Utilidades.FINALIZAR_ARTICULOS:{
+            case Utilidades.FINALIZAR_ARTICULOS_NUEVO:
+            case Utilidades.FINALIZAR_ARTICULOS_ACTUALIZAR:{
                 Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(), mainActivity.getResources().getString(R.string.num_articulos,respuesta));
 
                 String ahora = Utilidades.fechaCadena(new Date());

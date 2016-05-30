@@ -196,7 +196,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/content_caducidad"
+            android:id="@+id/layoutCaducidadArt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -244,6 +244,104 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/layoutAccionArt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_accion_art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_record_voice_over_black_24dp"/>
+
+            <TextView
+                android:id="@+id/lbl_accion_art"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:layout_toRightOf="@+id/img_accion_art"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/my_secondary_text"
+                android:text="@string/devol_accion"/>
+
+            <TextView
+                android:id="@+id/texto_accion_art"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_primary_text"
+                android:paddingTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/img_accion_art"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_below="@+id/lbl_accion_art"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/my_secondary_text"
+                android:layout_marginRight="15dp"
+                android:layout_toRightOf="@+id/img_accion_art"
+                android:layout_below="@id/texto_accion_art"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutMotivoArt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/img_motivo_art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/ic_assignment_late_black_24dp"/>
+
+            <TextView
+                android:id="@+id/lbl_motivo_art"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:layout_toRightOf="@+id/img_motivo_art"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/my_secondary_text"
+                android:text="@string/linea_motivo"/>
+
+            <TextView
+                android:id="@+id/texto_motivo_art"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/my_primary_text"
+                android:paddingTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/img_motivo_art"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_below="@+id/lbl_motivo_art"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/my_secondary_text"
+                android:layout_marginRight="15dp"
+                android:layout_toRightOf="@+id/img_motivo_art"
+                android:layout_below="@id/texto_motivo_art"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

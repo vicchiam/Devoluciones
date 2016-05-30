@@ -1,6 +1,7 @@
 package com.pcs.vicchiam.devoluciones.bbdd;
 
 import android.database.Cursor;
+import android.util.Log;
 
 /**
  * Created by vicchiam on 16/05/2016.
@@ -15,6 +16,8 @@ public class Linea {
     private String umv;
     private String lote;
     private String fecha;
+    private String accion;
+    private String motivo;
 
     /**
      * Empty constructor for a temporal lines
@@ -27,9 +30,11 @@ public class Linea {
         this.umv = "";
         this.lote = "";
         this.fecha = "";
+        this.accion = "";
+        this.motivo = "";
     }
 
-    public Linea(String codigo, String nombre, double cantidad, String umv, String lote, String fecha) {
+    public Linea(String codigo, String nombre, double cantidad, String umv, String lote, String fecha, String accion, String motivo) {
         this.id=0;
         this.codigo = codigo;
         this.nombre = nombre;
@@ -37,6 +42,8 @@ public class Linea {
         this.umv = umv;
         this.lote = lote;
         this.fecha = fecha;
+        this.accion=accion;
+        this.motivo=motivo;
     }
 
     public Linea(Cursor cursor){
@@ -47,6 +54,8 @@ public class Linea {
         this.umv=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_LINEA[4]));
         this.lote=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_LINEA[5]));
         this.fecha=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_LINEA[6]));
+        this.accion=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_LINEA[7]));
+        this.motivo=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_LINEA[8]));
     }
 
     public long getId(){ return id; }
@@ -101,21 +110,20 @@ public class Linea {
         this.fecha = fecha;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public String getAccion() {
+        return accion;
+    }
 
-        Linea linea = (Linea) o;
+    public void setAccion(String accion) {
+        this.accion = accion;
+    }
 
-        if (id != linea.id) return false;
-        if (Double.compare(linea.cantidad, cantidad) != 0) return false;
-        if (codigo != null ? !codigo.equals(linea.codigo) : linea.codigo != null) return false;
-        if (nombre != null ? !nombre.equals(linea.nombre) : linea.nombre != null) return false;
-        if (umv != null ? !umv.equals(linea.umv) : linea.umv != null) return false;
-        if (lote != null ? !lote.equals(linea.lote) : linea.lote != null) return false;
-        return fecha != null ? fecha.equals(linea.fecha) : linea.fecha == null;
+    public String getMotivo() {
+        return motivo;
+    }
 
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
     }
 
     public boolean tieneCambios(Linea nueva){
@@ -126,6 +134,8 @@ public class Linea {
         if(!this.getUmv().equals(nueva.getUmv())) return true;
         if(!this.getLote().equals(nueva.getLote())) return true;
         if(!this.getFecha().equals(nueva.getFecha())) return true;
+        if(!this.getAccion().equals(nueva.getAccion())) return true;
+        if(!this.getMotivo().equals(nueva.getMotivo())) return true;
         return false;
     }
 

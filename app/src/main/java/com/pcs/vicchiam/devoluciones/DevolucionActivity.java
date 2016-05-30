@@ -26,7 +26,7 @@ import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
-import com.pcs.vicchiam.devoluciones.fragments.CabeceraFragment;
+import com.pcs.vicchiam.devoluciones.fragments.DevolucionFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
@@ -44,7 +44,7 @@ public class DevolucionActivity extends AppCompatActivity {
     private Menu menu;
     private SearchSuggestionAdapter searchAdapter;
     private SearchView searchView;
-    private CabeceraFragment cabeceraFragment;
+    private DevolucionFragment devolucionFragment;
     private LineaFragment lineaFragment;
     private int actualFragment;
     private long id;
@@ -55,7 +55,7 @@ public class DevolucionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_devolucion);
         this.self=this;
 
-        cabeceraFragment=CabeceraFragment.newInstance(null);
+        devolucionFragment = DevolucionFragment.newInstance(null);
         actualFragment=0;
 
         initializeUI();
@@ -86,7 +86,7 @@ public class DevolucionActivity extends AppCompatActivity {
 
         this.coordinatorLayout=(CoordinatorLayout)findViewById(R.id.clayout_devol);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, cabeceraFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, devolucionFragment).commit();
     }
 
     /**
@@ -175,7 +175,7 @@ public class DevolucionActivity extends AppCompatActivity {
                 if(self.actualFragment==0) {
                     String codigo = cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[0]));
                     String nombre = cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[1]));
-                    cabeceraFragment.actualizarCabecera(codigo, nombre);
+                    devolucionFragment.actualizarCabecera(codigo, nombre);
                 }
                 else{
                     String codigo = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[0]));
@@ -247,7 +247,7 @@ public class DevolucionActivity extends AppCompatActivity {
         }
         else{
             menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp));
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cabeceraFragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, devolucionFragment).commit();
             actualFragment=0;
         }
     }
@@ -258,13 +258,13 @@ public class DevolucionActivity extends AppCompatActivity {
     private void guardar(){
         //Save a data
         if(actualFragment==0){
-            cabeceraFragment.guardar();
+            devolucionFragment.guardar();
         }
         else{
             if(lineaFragment.guardar()){
                 Utilidades.crearSnackBar(this.coordinatorLayout,getResources().getString(R.string.linea_guardada));
                 cambiarFragment();
-                cabeceraFragment.refresh();
+                devolucionFragment.refresh();
             }
         }
 

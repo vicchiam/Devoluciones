@@ -50,6 +50,11 @@
     <string name="linea_lote">Lote</string>
     <string name="linea_caducidad">Caducidad (Pulsar aquí para abrir calendario)</string>
     <string name="linea_guardada">Linea guardada correctamente</string>
+    <string name="linea_motivo">Motivo</string>
+
+    <string name="linea_pregunta_motivo">¿Son motivos de la calidad del producto?</string>
+    <string name="linea_titulo_motivo">Motivo</string>
+    <string name="linea_titulo_acciones">Acciones</string>
 
     <string name="linea_e_codigo">Debes indicar un código</string>
     <string name="linea_e_cantidad">Debes indicar una cantidad</string>

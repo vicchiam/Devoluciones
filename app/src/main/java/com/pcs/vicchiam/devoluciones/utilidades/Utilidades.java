@@ -43,7 +43,8 @@ public class Utilidades {
     public static final int OBTENER_ARTICULOS_ACTUALIZAR=4;
     public static final int FINALIZAR_CLIENTES_NUEVO=5;
     public static final int FINALIZAR_CLIENTES_ACTUALIZAR=6;
-    public static final int FINALIZAR_ARTICULOS=7;
+    public static final int FINALIZAR_ARTICULOS_NUEVO=7;
+    public static final int FINALIZAR_ARTICULOS_ACTUALIZAR=8;
 
 
     //AsyncDatabaseType
