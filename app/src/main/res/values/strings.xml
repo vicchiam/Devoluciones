@@ -20,6 +20,11 @@
     <string name="settings">Configuración</string>
     <string name="actualizar">Actualizar Datos</string>
 
+    <!-- MAIN*********************************************************************************** -->
+    <string name="pagina1">Por procesar</string>
+    <string name="pagina2">No Enviados</string>
+    <string name="pagina3">Histórico</string>
+
     <!-- ALERTAS ******************************************************************************* -->
     <string name="advertencia">Advertencia</string>
     <string name="no_wifi_pref">No se ha indicado ninguna red Wifi, ve a configuración</string>
