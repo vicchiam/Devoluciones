@@ -43,6 +43,7 @@ public class ClienteDB extends SQLiteOpenHelper {
      */
     public ClienteDB(Context context){
         super(context,DATABASE_NAME,null,1);
+        getWritableDatabase();
     }
 
     @Override

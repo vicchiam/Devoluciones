@@ -67,4 +67,8 @@ public class ItemLineaAdapter extends BaseAdapter {
         return rowView;
     }
 
+    public void setList(List<Linea> list){
+        this.lineas=list;
+    }
+
 }

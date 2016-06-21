@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.pcs.vicchiam.devoluciones.MainActivity;
 import com.pcs.vicchiam.devoluciones.PreferenciasBarActivity;
@@ -14,6 +15,7 @@ import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.bbdd.DBAsyncTask;
 import com.pcs.vicchiam.devoluciones.bbdd.DevolucionDB;
+import com.pcs.vicchiam.devoluciones.bbdd.TransporteBD;
 import com.pcs.vicchiam.devoluciones.interfaces.RespuestaServidor;
 
 import org.json.JSONArray;
@@ -37,8 +39,9 @@ public class Logica implements RespuestaServidor {
     private ClienteDB clienteDB;
     private ArticuloDB articuloDB;
     private DevolucionDB devolucionDB;
+    private TransporteBD transporteBD;
 
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     public static Logica getInstance(MainActivity mainActivity){
         if(instancia==null){
@@ -65,67 +68,7 @@ public class Logica implements RespuestaServidor {
         clienteDB=new ClienteDB(this.mainActivity);
         articuloDB=new ArticuloDB(this.mainActivity);
         devolucionDB=new DevolucionDB(this.mainActivity);
-    }
-
-    /**
-     * Check if the pref values are OK and if WIFI ssid is the same that on the preferences
-     */
-    public boolean comprobarRecursos(){
-        //Get the preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
-        String miWifi=prefs.getString("ssid",mainActivity.getResources().getString(R.string.wifi_defecto));
-        String servidor=prefs.getString("servidor",mainActivity.getResources().getString(R.string.servidor_defecto));
-        String servicio=prefs.getString("servicio",mainActivity.getResources().getString(R.string.servicio_defecto));
-
-        //Check if wifi preference is right
-        if(miWifi.equals("")){
-            Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.no_wifi_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    Intent intent=new Intent(mainActivity, PreferenciasBarActivity.class);
-                    mainActivity.startActivity(intent);
-                }
-            });
-            return false;
-        }
-        //Check if the server preference is rigth
-        if(servidor.equals("")){
-            Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.no_servidor_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    Intent intent=new Intent(mainActivity, PreferenciasBarActivity.class);
-                    mainActivity.startActivity(intent);
-                }
-            });
-            return false;
-        }
-
-        //Check if the service preference is right
-        if(servicio.equals("")){
-            Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.no_servicio_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    Intent intent=new Intent(mainActivity, PreferenciasBarActivity.class);
-                    mainActivity.startActivity(intent);
-                }
-            });
-            return false;
-        }
-
-        //Check if the WIFI ssid is the same that on the preferences
-        if(!Utilidades.Wifi(this.mainActivity,miWifi)) {
-            Utilidades.Alerts(mainActivity, null, mainActivity.getResources().getString(R.string.no_wifi_conn, miWifi), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);
-            return false;
-        }
-
-        //Put the recurso value
-        this.recurso="http://"+servidor+"/"+servicio;
-
-        //All is rigth return TRUE
-        return true;
+        transporteBD=new TransporteBD(this.mainActivity);
     }
 
     /**
@@ -133,7 +76,8 @@ public class Logica implements RespuestaServidor {
      * @param forzar If is TRUE remove an insert all
      */
     public void obtenerDatos(boolean forzar){
-        if(!comprobarRecursos()){
+        this.recurso=Utilidades.comprobarRecursos(mainActivity);
+        if(this.recurso==null){
             return;
         }
 
@@ -155,6 +99,9 @@ public class Logica implements RespuestaServidor {
         editor.commit();
         */
 
+        //Block connection and database access
+        Utilidades.SEMAFORO.lock();
+
         if(forzar || ultimaActualizacion.equals("01/01/1990")) {
             obtenerClientes(Utilidades.OBTENER_CLIENTES_NUEVO);
         }
@@ -170,6 +117,10 @@ public class Logica implements RespuestaServidor {
     private void obtenerClientes(int tipo){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
+
+        if(tipo==Utilidades.OBTENER_CLIENTES_NUEVO){
+            fecha="01/01/1990";
+        }
 
         //Update the customers
         HashMap<String,String> hashMap=new HashMap<>();
@@ -188,10 +139,26 @@ public class Logica implements RespuestaServidor {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
         String fecha=prefs.getString("ultima_actualizacion", "01/01/1990");
 
+        if(tipo==Utilidades.OBTENER_ARTICULOS_NUEVO){
+            fecha="01/01/1990";
+        }
+
         //Update the customers
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("operacion","obtener_articulos_mod");
         hashMap.put("fecha",fecha);
+
+        Conexion conn = new Conexion(this.mainActivity, this, this.recurso,tipo);
+        conn.execute(hashMap);
+    }
+
+    /**
+     * Get transport devolutions from server and save in database
+     * @param tipo
+     */
+    private void obtenerDevolucionesTrasporte(int tipo){
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("operacion","obtener_devoluciones");
 
         Conexion conn = new Conexion(this.mainActivity, this, this.recurso,tipo);
         conn.execute(hashMap);
@@ -207,10 +174,12 @@ public class Logica implements RespuestaServidor {
         switch (tipo){
             case Utilidades.ERROR_BASE_DATOS:{
                 Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.database_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                Utilidades.SEMAFORO.unlock();
                 break;
             }
             case Utilidades.ERROR_CONEXION:{
                 Utilidades.Alerts(mainActivity,null,mainActivity.getResources().getString(R.string.conn_err),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                Utilidades.SEMAFORO.unlock();
                 break;
             }
             case Utilidades.OBTENER_CLIENTES_NUEVO:{
@@ -251,7 +220,22 @@ public class Logica implements RespuestaServidor {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
                 SharedPreferences.Editor editor=prefs.edit();
                 editor.putString("ultima_actualizacion",ahora);
+                //Variable that get if is a first time that app run or not
+                editor.putBoolean("appInicializada",true);
                 editor.commit();
+
+                obtenerDevolucionesTrasporte(Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE);
+                break;
+            }
+            case Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE:{
+                DBAsyncTask dbAsyncTask=new DBAsyncTask(mainActivity,this, Utilidades.FINALIZAR_DEVOLUCIONES_TRANSPORTE);
+                dbAsyncTask.guardar(respuesta);
+                break;
+            }
+            case Utilidades.FINALIZAR_DEVOLUCIONES_TRANSPORTE:{
+                Utilidades.SEMAFORO.unlock();
+                //Update the main page, the first fragment
+                mainActivity.actualizar(0);
                 break;
             }
             default:{
@@ -260,32 +244,4 @@ public class Logica implements RespuestaServidor {
         }
     }
 
-    /**
-     * With a JSON of customers makes a database table of customers
-     * @param jsonClientes
-     * @param forzar If is TRUE remove an insert all
-     */
-    private void procesarClientes(String jsonClientes,boolean forzar){
-        try {
-            if (forzar){
-                clienteDB.truncate();
-            }
-            JSONObject jsonObject=new JSONObject(jsonClientes);
-            JSONArray jsonArray=jsonObject.getJSONArray("clientes");
-            for(int i=0;i<jsonArray.length();i++){
-                JSONObject jObj=jsonArray.getJSONObject(i);
-                int codigo=jObj.getInt("CODIGO");
-                String nombre=jObj.getString("NOMBRE");
-                if(forzar) {
-                    clienteDB.insertar(codigo, nombre);
-                }
-                else{
-                    clienteDB.reemplazar(codigo,nombre);
-                }
-            }
-            Utilidades.crearSnackBar(mainActivity.getCoordinatorLayout(),"Clientes actualizados "+jsonArray.length());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 }

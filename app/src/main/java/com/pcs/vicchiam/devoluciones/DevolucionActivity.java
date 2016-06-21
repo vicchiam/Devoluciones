@@ -63,6 +63,18 @@ public class DevolucionActivity extends AppCompatActivity {
         Utilidades.devolucion=new Devolucion();
 
         id=0;
+        Intent i=getIntent();
+        if(i.getExtras().containsKey("id")){
+            id=i.getExtras().getLong("id");
+        }
+        Utilidades.devolucion.setId(id);
+
+        if(i.getExtras().containsKey("codigo")){
+            Utilidades.devolucion.setCodigo(i.getExtras().getString("codigo"));
+        }
+        if(i.getExtras().containsKey("nombre")){
+            Utilidades.devolucion.setNombre(i.getExtras().getString("nombre"));
+        }
     }
 
     /**
@@ -98,7 +110,7 @@ public class DevolucionActivity extends AppCompatActivity {
             searchView.onActionViewCollapsed();
         } else {
             if(actualFragment==0){
-                finish();
+                devolucionFragment.perderCambios();
             }
             else{
                 lineaFragment.perderCambios();
@@ -117,7 +129,7 @@ public class DevolucionActivity extends AppCompatActivity {
             //When pressed a left button of the actionbar
             case android.R.id.home:{
                 if(actualFragment==0){
-                    finish();
+                    devolucionFragment.perderCambios();
                 }
                 else{
                     //If are in a fragmet line chek if have changes without save

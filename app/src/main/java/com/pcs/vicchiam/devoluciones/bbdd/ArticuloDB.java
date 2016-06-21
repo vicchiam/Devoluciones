@@ -41,6 +41,7 @@ public class ArticuloDB extends SQLiteOpenHelper{
 
     public ArticuloDB(Context context){
         super(context,DATABASE_NAME,null,1);
+        getWritableDatabase();
     }
 
     @Override

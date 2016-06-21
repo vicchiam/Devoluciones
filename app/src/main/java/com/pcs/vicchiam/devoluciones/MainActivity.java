@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,14 +13,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TableLayout;
 
-import com.pcs.vicchiam.devoluciones.adapters.PageAdapter;
+import com.pcs.vicchiam.devoluciones.adapters.PaginaAdapter;
+import com.pcs.vicchiam.devoluciones.fragments.ProcesarFragment;
 import com.pcs.vicchiam.devoluciones.utilidades.Logica;
 
 /**
@@ -69,14 +69,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         coordinatorLayout=(CoordinatorLayout)findViewById(R.id.clayout);
 
-        //tabLayout=(TabLayout)findViewById(R.id.tab_layout);
-        //tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout=(TabLayout)findViewById(R.id.tab_layout);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        //viewPager = (ViewPager) findViewById(R.id.viewpager);
-        //PageAdapter pAdapter=new PageAdapter(getSupportFragmentManager(),MainActivity.this);
-        //viewPager.setAdapter(pAdapter);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        PaginaAdapter pAdapter=new PaginaAdapter(getSupportFragmentManager(),MainActivity.this);
+        viewPager.setAdapter(pAdapter);
 
-        //tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
 
     }
 
@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        Log.e("MENU","MENU");
         return true;
     }
 
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.menu_nuevo: {
                 Intent intent=new Intent(self,DevolucionActivity.class);
+                intent.putExtra("id",0);
                 self.startActivity(intent);
                 break;
             }
@@ -172,8 +172,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         logica=Logica.getInstance(self);
     }
 
+    /**
+     * Get layout coordinator
+     * @return
+     */
     public CoordinatorLayout getCoordinatorLayout(){
         return this.coordinatorLayout;
+    }
+
+    /**
+     * Update the viewpager fragments
+     * @param pos
+     */
+    public void actualizar(int pos){
+        PaginaAdapter adapter=(PaginaAdapter)viewPager.getAdapter();
+        Fragment f=adapter.getItem(pos);
+        if(f instanceof ProcesarFragment){
+            ProcesarFragment pf=(ProcesarFragment)f;
+            pf.actualizarListado();
+        }
+    }
+
+    public void abrirDevolucion(String codigo, String nombre, long id){
+        Intent intent=new Intent(self,DevolucionActivity.class);
+        intent.putExtra("id",0);
+        intent.putExtra("codigo",codigo);
+        intent.putExtra("nombre",nombre);
+        intent.putExtra("id_trasporte",id);
+        self.startActivity(intent);
     }
 
 

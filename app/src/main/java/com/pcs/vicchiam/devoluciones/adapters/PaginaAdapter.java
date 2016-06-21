@@ -6,24 +6,35 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.pcs.vicchiam.devoluciones.R;
+import com.pcs.vicchiam.devoluciones.fragments.EnviarFragment;
+import com.pcs.vicchiam.devoluciones.fragments.HistoricoFragment;
 import com.pcs.vicchiam.devoluciones.fragments.ProcesarFragment;
 
 /**
  * Created by vicch on 31/05/2016.
  */
-public class PageAdapter extends FragmentPagerAdapter {
+public class PaginaAdapter extends FragmentPagerAdapter {
 
     private final int PAGE_COUNT=3;
     private Context context;
 
-    public PageAdapter(FragmentManager fm, Context context){
+    public PaginaAdapter(FragmentManager fm, Context context){
         super(fm);
         this.context=context;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ProcesarFragment.newInstance(position);
+        switch (position){
+            case 0:
+                return ProcesarFragment.newInstance(position);
+            case 1:
+                return EnviarFragment.newInstance(position);
+            case 2:
+                return HistoricoFragment.newInstance(position);
+            default:
+                return null;
+        }
     }
 
     @Override

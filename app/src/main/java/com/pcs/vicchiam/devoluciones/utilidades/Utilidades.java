@@ -3,17 +3,21 @@ package com.pcs.vicchiam.devoluciones.utilidades;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 
+import com.pcs.vicchiam.devoluciones.PreferenciasBarActivity;
 import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
 
@@ -45,11 +49,18 @@ public class Utilidades {
     public static final int FINALIZAR_CLIENTES_ACTUALIZAR=6;
     public static final int FINALIZAR_ARTICULOS_NUEVO=7;
     public static final int FINALIZAR_ARTICULOS_ACTUALIZAR=8;
+    public static final int OBTENER_DEVOLUCIONES_TRANSPORTE=9;
+    public static final int FINALIZAR_DEVOLUCIONES_TRANSPORTE=10;
+    public static final int OBTENER_DEVOLUCIONES_TRANSPORTE_LISTADO=11;
+    public static final int FINALIZAR_DEVOLUCIONES_TRANSPORTE_LISTADO=12;
 
 
     //AsyncDatabaseType
     public static final int CLIENTE=0;
     public static final int ARTICULO=0;
+
+    //Semaforo
+    public static Semaforo SEMAFORO=new Semaforo();
 
     /**
      * Method that make the alerts
@@ -147,6 +158,66 @@ public class Utilidades {
             }
         }
         return false;
+    }
+
+    /**
+     * Check if the pref values are OK and if WIFI ssid is the same that on the preferences
+     */
+    public static String comprobarRecursos(final Activity activity){
+
+        //Get the preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        String miWifi=prefs.getString("ssid",activity.getResources().getString(R.string.wifi_defecto));
+        String servidor=prefs.getString("servidor",activity.getResources().getString(R.string.servidor_defecto));
+        String servicio=prefs.getString("servicio",activity.getResources().getString(R.string.servicio_defecto));
+
+        //Check if wifi preference is right
+        if(miWifi.equals("")){
+            Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.no_wifi_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Intent intent=new Intent(activity, PreferenciasBarActivity.class);
+                    activity.startActivity(intent);
+                }
+            });
+            return null;
+        }
+        //Check if the server preference is rigth
+        if(servidor.equals("")){
+            Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.no_servidor_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Intent intent=new Intent(activity, PreferenciasBarActivity.class);
+                    activity.startActivity(intent);
+                }
+            });
+            return null;
+        }
+
+        //Check if the service preference is right
+        if(servicio.equals("")){
+            Utilidades.Alerts(activity,null,activity.getResources().getString(R.string.no_servicio_pref),Utilidades.TIPO_ADVERTENCIA_CONFIGURACION,new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Intent intent=new Intent(activity, PreferenciasBarActivity.class);
+                    activity.startActivity(intent);
+                }
+            });
+            return null;
+        }
+
+        //Check if the WIFI ssid is the same that on the preferences
+        if(!Utilidades.Wifi(activity,miWifi)) {
+            Utilidades.Alerts(activity, null, activity.getResources().getString(R.string.no_wifi_conn, miWifi), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);
+            return null;
+        }
+
+        //Return the recurso value
+        return "http://"+servidor+"/"+servicio;
+
     }
 
     /**

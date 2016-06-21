@@ -1,8 +1,10 @@
 package com.pcs.vicchiam.devoluciones.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import android.widget.ListView;
 import com.pcs.vicchiam.devoluciones.DevolucionActivity;
 import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.adapters.ItemLineaAdapter;
+import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
+import com.pcs.vicchiam.devoluciones.bbdd.Linea;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
 /**
@@ -64,6 +68,9 @@ public class DevolucionFragment extends Fragment {
         editCodigo=(EditText) view.findViewById(R.id.edit_codigo);
         editRazon=(EditText) view.findViewById(R.id.edit_razon);
 
+        editCodigo.setText(Utilidades.devolucion.getCodigo());
+        editRazon.setText(Utilidades.devolucion.getNombre());
+
         listView=(ListView) view.findViewById(R.id.list_lineas);
         itemLineaAdapter=new ItemLineaAdapter(devolucionActivity, Utilidades.devolucion.getLineas());
         listView.setAdapter(itemLineaAdapter);
@@ -75,6 +82,30 @@ public class DevolucionFragment extends Fragment {
                 devolucionActivity.abrirLinea(bundle);
             }
         });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                new AlertDialog.Builder(devolucionActivity)
+                        .setTitle("Borrar")
+                        .setMessage("¿Seguro que quieres borrar?")
+                        .setPositiveButton("Borrar", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Utilidades.devolucion.removeLinea(position);
+                                refresh();
+                            }
+                        })
+                        .setNeutralButton("Cancelar",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
+
         return view;
     }
 
@@ -85,6 +116,24 @@ public class DevolucionFragment extends Fragment {
     }
 
     /**
+     * When exit the fragment check if have some change if have a change, show a alert dialog
+     */
+    public void perderCambios(){
+        Devolucion nueva=leerDevolucion();
+        if(Utilidades.devolucion.tieneCambios(nueva)){
+            Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.descartar_cambios),Utilidades.TIPO_ADVERTENCIA_SI_NO, new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    devolucionActivity.finish();
+                }
+            });
+        }
+        else {
+            devolucionActivity.finish();
+        }
+    }
+
+    /**
      * Put data in the fragment edittext
      * @param codigo
      * @param razon
@@ -92,6 +141,13 @@ public class DevolucionFragment extends Fragment {
     public void actualizarCabecera(String codigo, String razon){
         editCodigo.setText(codigo);
         editRazon.setText(razon);
+    }
+
+    public Devolucion leerDevolucion(){
+        Devolucion devolucion=new Devolucion();
+        devolucion.setCodigo(editCodigo.getText().toString());
+        devolucion.setNombre(editRazon.getText().toString());
+        return devolucion;
     }
 
     /**

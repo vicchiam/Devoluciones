@@ -10,7 +10,7 @@
         <item
             android:id="@+id/navigation_item_2"
             android:icon="@drawable/ic_sync_black_24dp"
-            android:title="@string/actualizar"/>
+            android:title="@string/resetear"/>
 
         <item
             android:id="@+id/navigation_item_3"

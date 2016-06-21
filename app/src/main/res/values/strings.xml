@@ -19,6 +19,7 @@
     <string name="home">Inicio</string>
     <string name="settings">Configuración</string>
     <string name="actualizar">Actualizar Datos</string>
+    <string name="resetear">Resetear Datos</string>
 
     <!-- MAIN*********************************************************************************** -->
     <string name="pagina1">Por procesar</string>

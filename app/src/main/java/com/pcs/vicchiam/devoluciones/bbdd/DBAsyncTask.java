@@ -3,6 +3,7 @@ package com.pcs.vicchiam.devoluciones.bbdd;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.interfaces.RespuestaServidor;
@@ -22,6 +23,8 @@ public class DBAsyncTask {
     private RespuestaServidor respuestaServidor;
     private ClienteDB clienteDB;
     private ArticuloDB articuloDB;
+    private TransporteBD transporteBD;
+    private DevolucionDB devolucionDB;
     private int tipo;
 
     /**
@@ -36,6 +39,8 @@ public class DBAsyncTask {
         this.tipo=tipo;
         clienteDB=new ClienteDB(activity);
         articuloDB=new ArticuloDB(activity);
+        devolucionDB=new DevolucionDB(activity);
+        transporteBD=new TransporteBD(activity);
     }
 
     /**
@@ -63,9 +68,11 @@ public class DBAsyncTask {
 
         @Override
         protected void onPreExecute() {
-            this.dialog.setTitle(activity.getResources().getString(R.string.progress_title));
-            this.dialog.setMessage(activity.getResources().getString(R.string.progress_msj_save));
-            this.dialog.show();
+            if(tipo!=Utilidades.FINALIZAR_DEVOLUCIONES_TRANSPORTE_LISTADO) {
+                this.dialog.setTitle(activity.getResources().getString(R.string.progress_title));
+                this.dialog.setMessage(activity.getResources().getString(R.string.progress_msj_save));
+                this.dialog.show();
+            }
         }
 
         /**
@@ -118,11 +125,33 @@ public class DBAsyncTask {
                     }
                     count=jsonArray.length();
                 }
+                if(jsonObject.has("devoluciones")){
+                    transporteBD.truncate();
+                    JSONArray jsonArray=jsonObject.getJSONArray("devoluciones");
+                    for(int i=0;i<jsonArray.length();i++) {
+                        JSONObject jObj = jsonArray.getJSONObject(i);
+                        long id=jObj.getLong("id");
+                        String cliente=jObj.getString("cliente");
+                        String nombre=jObj.getString("nombre");
+                        String fecha=jObj.getString("fecha");
+                        String obs=jObj.getString("obs");
+                        String obs_cal=jObj.getString("com_calidad");
+                        String observacion=obs+"CALIDAD:"+obs_cal;
+                        try {
+                            if (!devolucionDB.existeTrasporte(id)) {
+                                transporteBD.insertarTransporte(id, cliente, nombre, fecha, observacion);
+                            }
+                        }
+                        catch (Exception e){
+                            Log.e("EXC",e.getMessage());
+                        }
+                    }
+                    count=jsonArray.length();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 count=-1;
             }
-
             return count;
         }
 
@@ -132,7 +161,7 @@ public class DBAsyncTask {
          */
         @Override
         protected void onPostExecute(final Integer respuesta) {
-            if (dialog.isShowing()) {
+            if (tipo!=Utilidades.FINALIZAR_DEVOLUCIONES_TRANSPORTE_LISTADO && dialog.isShowing()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -148,8 +177,5 @@ public class DBAsyncTask {
             }
         }
     }
-
-
-
 
 }

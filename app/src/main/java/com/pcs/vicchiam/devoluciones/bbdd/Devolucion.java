@@ -14,8 +14,7 @@ public class Devolucion {
     private long id;
     private String codigo;
     private String nombre;
-    private String accion;
-    private String motivo;
+    private String observacion;
     private List<Linea> lineas;
     private List<Adjunto> adjuntos;
 
@@ -27,12 +26,11 @@ public class Devolucion {
         this.adjuntos=new ArrayList<>();
     }
 
-    public Devolucion(String codigo, String nombre, String accion, String motivo) {
+    public Devolucion(String codigo, String nombre, String observacion) {
         this.id=0;
         this.codigo = codigo;
         this.nombre = nombre;
-        this.accion = accion;
-        this.motivo = motivo;
+        this.observacion=observacion;
         this.lineas=new ArrayList<>();
         this.adjuntos=new ArrayList<>();
     }
@@ -41,8 +39,7 @@ public class Devolucion {
         this.id=cursor.getLong(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[0]));
         this.codigo=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[1]));
         this.nombre=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[2]));
-        this.accion=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[3]));
-        this.motivo=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[4]));
+        this.observacion=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[3]));
         this.lineas=new ArrayList<>();
         this.adjuntos=new ArrayList<>();
     }
@@ -67,20 +64,12 @@ public class Devolucion {
         this.nombre = nombre;
     }
 
-    public String getAccion() {
-        return accion;
+    public String getObservacion() {
+        return observacion;
     }
 
-    public void setAccion(String accion) {
-        this.accion = accion;
-    }
-
-    public String getMotivo() {
-        return motivo;
-    }
-
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
     public List<Linea> getLineas() {
@@ -89,14 +78,6 @@ public class Devolucion {
 
     public void setLineas(List<Linea> lineas) {
         this.lineas = lineas;
-    }
-
-    public List<Adjunto> getAdjuntos() {
-        return adjuntos;
-    }
-
-    public void setAdjuntos(List<Adjunto> adjuntos) {
-        this.adjuntos = adjuntos;
     }
 
     public void setLinea(Linea linea){
@@ -117,16 +98,28 @@ public class Devolucion {
         lineas.add(pos,linea);
     }
 
-    public void setAdjunto(Adjunto a){
-        adjuntos.add(a);
-    }
-
     public Linea getLinea(long id){
         for(Linea l : lineas){
             if(l.getId()==id)
                 return l;
         }
         return null;
+    }
+
+    public void removeLinea(int pos){
+        lineas.remove(pos);
+    }
+
+    public List<Adjunto> getAdjuntos() {
+        return adjuntos;
+    }
+
+    public void setAdjuntos(List<Adjunto> adjuntos) {
+        this.adjuntos = adjuntos;
+    }
+
+    public void setAdjunto(Adjunto a){
+        adjuntos.add(a);
     }
 
     public Adjunto getAdjunto(long id){
@@ -136,6 +129,12 @@ public class Devolucion {
             }
         }
         return null;
+    }
+
+    public boolean tieneCambios(Devolucion devolucion){
+        if(!this.getCodigo().equals(devolucion.getCodigo())) return true;
+        if(!this.getNombre().equals(devolucion.getNombre())) return true;
+        return false;
     }
 
 }

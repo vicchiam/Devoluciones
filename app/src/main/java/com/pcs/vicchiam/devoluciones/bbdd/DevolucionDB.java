@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,22 +18,22 @@ public class DevolucionDB extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME="Devoluciones.db";
 
-    public static final String PRAGMA_SQL="PRAGMA foreign_keys = ON;";
+    public static final String PRAGMA_SQL="PRAGMA foreign_keys = ON";
 
     public static final String TABLE_NAME_DEVOLUCION="devolucion";
     public static final String TABLE_NAME_LINEA="linea";
     public static final String TABLE_NAME_ADJUNTO="adjunto";
 
-    public static final String[] COLS_DEVOLUCION={"id","codigo","cliente","razon","accion","motivo"};
-    public static final String[] COLS_TYPE_DEVOLUCION={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","TEXT","TEXT","TEXT"};
+    public static final String[] COLS_DEVOLUCION={"id","codigo","cliente","razon","observacion","tipo","id_transporte"};
+    public static final String[] COLS_TYPE_DEVOLUCION={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","TEXT","TEXT","INTEGER","INTEGER"};
 
     public static final String[] COLS_LINEA={"id","codigo","descripcion","cantidad","umv","lote","caducidad","accion","motivo","id_devolucion"};
-    public static final String[] COLS_TYPE_LINEA={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","NUMBER","TEXT","TEXT","TEXT","INTEGER"};
+    public static final String[] COLS_TYPE_LINEA={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","NUMBER","TEXT","TEXT","TEXT","TEXT","TEXT","INTEGER"};
 
     public static final String[] COLS_ADJUNTO={"id","path","id_devolucion"};
     public static final String[] COLS_TYPE_ADJUNTO={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","INTEGER"};
 
-    public static final String FOREIGN_KEY=" FOREIGN KEY(id_devolucion) REFERENCES devolucion(id) ";
+    public static final String FOREIGN_KEY_LINEA=" FOREIGN KEY(id_devolucion) REFERENCES devolucion(id)";
 
     /**
      * Make a create Devolution table SQL
@@ -56,8 +57,8 @@ public class DevolucionDB extends SQLiteOpenHelper{
         for(int i=0;i<(COLS_LINEA.length-1);i++){
             SQL+=COLS_LINEA[i]+" "+COLS_TYPE_LINEA[i]+", ";
         }
-        SQL+=COLS_LINEA[COLS_LINEA.length-1]+" "+COLS_TYPE_LINEA[COLS_LINEA.length-1]+")";
-        SQL+=FOREIGN_KEY;
+        SQL+=COLS_LINEA[COLS_LINEA.length-1]+" "+COLS_TYPE_LINEA[COLS_LINEA.length-1];
+        SQL+=","+FOREIGN_KEY_LINEA+")";
         return SQL;
     }
 
@@ -70,8 +71,8 @@ public class DevolucionDB extends SQLiteOpenHelper{
         for(int i=0;i<(COLS_ADJUNTO.length-1);i++){
             SQL+=COLS_ADJUNTO[i]+" "+COLS_TYPE_ADJUNTO[i]+", ";
         }
-        SQL+=COLS_ADJUNTO[COLS_ADJUNTO.length-1]+" "+COLS_TYPE_ADJUNTO[COLS_ADJUNTO.length-1]+")";
-        SQL+=FOREIGN_KEY;
+        SQL+=COLS_ADJUNTO[COLS_ADJUNTO.length-1]+" "+COLS_TYPE_ADJUNTO[COLS_ADJUNTO.length-1];
+        SQL+=","+FOREIGN_KEY_LINEA+")";
         return SQL;
     }
 
@@ -84,6 +85,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
 
     public DevolucionDB(Context context){
         super(context,DATABASE_NAME,null,1);
+        onCreate(getWritableDatabase());
     }
 
     @Override
@@ -119,7 +121,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * Get all devolutions
      * @return list of devolutions
      */
-    public List<Devolucion> obtenerTodosDevoluciones(){
+    public List<Devolucion> obtenerTodasDevoluciones(){
         List<Devolucion> list=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
         Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_DEVOLUCION, null);
@@ -168,19 +170,17 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * Insert a devolution in the databasae
      * @param codigo
      * @param razon
-     * @param accion
-     * @param motivo
+     * @param observacion
      * @return
      */
-    public Devolucion insertarDevolucion(String codigo, String razon, String accion, String motivo){
+    public Devolucion insertarDevolucion(String codigo, String razon, String observacion){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put("codigo",codigo);
         cv.put("razon",razon);
-        cv.put("accion",accion);
-        cv.put("motivo",motivo);
+        cv.put("observacion",observacion);
         long id=db.insert(TABLE_NAME_DEVOLUCION,null,cv);
-        Devolucion dev=new Devolucion(codigo, razon, accion, motivo);
+        Devolucion dev=new Devolucion(codigo, razon, observacion);
         dev.setId(id);
         return dev;
     }
@@ -189,19 +189,36 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * Insert or update a devolution in database
      * @param codigo
      * @param razon
-     * @param accion
-     * @param motivo
+     * @param observacion
      * @return
      */
-    public Devolucion remplazarDevolucion(String codigo, String razon, String accion, String motivo){
+    public Devolucion remplazarDevolucion(long id, String codigo, String razon,String observacion){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
+        cv.put("id",id);
         cv.put("codigo",codigo);
         cv.put("razon",razon);
-        cv.put("accion",accion);
-        cv.put("motivo",motivo);
+        cv.put("observacion",observacion);
         db.replace(TABLE_NAME_DEVOLUCION,null,cv);
-        return new Devolucion(codigo, razon, accion, motivo);
+        return new Devolucion(codigo, razon, observacion);
+    }
+
+    public void modificarIdTrasporte(long id, long id_trans){
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+        cv.put("id",id);
+        db.replace(TABLE_NAME_DEVOLUCION,null,cv);
+    }
+
+    public boolean existeTrasporte(long id_transporte){
+        List<Devolucion> list=new ArrayList<>();
+        SQLiteDatabase db=this.getReadableDatabase();
+        Cursor cursor=db.rawQuery("SELECT * FROM "+TABLE_NAME_DEVOLUCION+" WHERE id_transporte="+id_transporte+"",null);
+        cursor.moveToFirst();
+        Log.e("ESTA",cursor.getCount()+"");
+        int res=cursor.getCount();
+        cursor.close();
+        return (res>0);
     }
 
     /**
