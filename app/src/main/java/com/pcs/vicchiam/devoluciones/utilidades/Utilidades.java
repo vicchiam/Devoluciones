@@ -12,6 +12,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Layout;
 import android.util.Log;
@@ -20,6 +21,9 @@ import android.view.View;
 import com.pcs.vicchiam.devoluciones.PreferenciasBarActivity;
 import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
+import com.pcs.vicchiam.devoluciones.bbdd.Linea;
+import com.pcs.vicchiam.devoluciones.fragments.DevolucionFragment;
+import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +37,9 @@ public class Utilidades {
 
     //Devolucion
     public static Devolucion devolucion;
+
+    public static DevolucionFragment devolFrag;
+    public static LineaFragment lineaFrag;
 
     public static final int TIPO_ADVERTENCIA_NEUTRAL=0;
     public static final int TIPO_ADVERTENCIA_CONFIGURACION=1;

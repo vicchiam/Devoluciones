@@ -224,7 +224,8 @@ public class Logica implements RespuestaServidor {
                 editor.putBoolean("appInicializada",true);
                 editor.commit();
 
-                obtenerDevolucionesTrasporte(Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE);
+                //obtenerDevolucionesTrasporte(Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE);
+                Utilidades.SEMAFORO.unlock();
                 break;
             }
             case Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE:{
@@ -233,7 +234,7 @@ public class Logica implements RespuestaServidor {
                 break;
             }
             case Utilidades.FINALIZAR_DEVOLUCIONES_TRANSPORTE:{
-                Utilidades.SEMAFORO.unlock();
+                //Utilidades.SEMAFORO.unlock();
                 //Update the main page, the first fragment
                 mainActivity.actualizar(0);
                 break;

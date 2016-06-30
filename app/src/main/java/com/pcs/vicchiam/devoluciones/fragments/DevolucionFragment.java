@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.pcs.vicchiam.devoluciones.DevolucionActivity;
 import com.pcs.vicchiam.devoluciones.R;
 import com.pcs.vicchiam.devoluciones.adapters.ItemLineaAdapter;
 import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
+import com.pcs.vicchiam.devoluciones.bbdd.DevolucionDB;
 import com.pcs.vicchiam.devoluciones.bbdd.Linea;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
@@ -106,6 +108,8 @@ public class DevolucionFragment extends Fragment {
             }
         });
 
+        llenarDevolucion();
+
         return view;
     }
 
@@ -133,6 +137,12 @@ public class DevolucionFragment extends Fragment {
         }
     }
 
+    public void llenarDevolucion(){
+        editCodigo.setText(Utilidades.devolucion.getCodigo());
+        editRazon.setText(Utilidades.devolucion.getNombre());
+        refresh();
+    }
+
     /**
      * Put data in the fragment edittext
      * @param codigo
@@ -154,7 +164,18 @@ public class DevolucionFragment extends Fragment {
      * Save in a object Devolucion the data of the editText
      */
     public void guardar(){
+        DevolucionDB devolucionDB=new DevolucionDB(this.devolucionActivity);
 
+        String codigo=editCodigo.getText().toString();
+        String nombre=editRazon.getText().toString();
+        Utilidades.devolucion.setCodigo(codigo);
+        Utilidades.devolucion.setNombre(nombre);
+        if(Utilidades.devolucion.getId()==0){
+            Utilidades.devolucion.agregar(devolucionDB);
+        }
+        else if(Utilidades.devolucion.getId()>0){
+            Utilidades.devolucion.modificar(devolucionDB);
+        }
     }
 
     /**

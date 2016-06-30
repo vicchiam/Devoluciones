@@ -13,14 +13,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.zxing.common.StringUtils;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.Util;
 import com.pcs.vicchiam.devoluciones.adapters.SearchSuggestionAdapter;
 import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
@@ -37,6 +40,11 @@ import java.util.List;
  * Class that make a activity that contains a devolutions and lines
  */
 public class DevolucionActivity extends AppCompatActivity {
+
+    private static final String ID="ID";
+    private static final String ACTUAL_FRAGMENT="ACTUAL_FRAGMENT";
+    private static final String DEVOL_FRAG="DEVOL_FRAG";
+    private static final String LINEA_FRAG="LINEA_FRAG";
 
     private DevolucionActivity self;
     private CoordinatorLayout coordinatorLayout;
@@ -55,26 +63,48 @@ public class DevolucionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_devolucion);
         this.self=this;
 
-        devolucionFragment = DevolucionFragment.newInstance(null);
-        actualFragment=0;
+        if(savedInstanceState==null) {
+
+            devolucionFragment = DevolucionFragment.newInstance(null);
+
+            actualFragment = 0;
+
+            Utilidades.devolucion = new Devolucion();
+
+            id = 0;
+            Intent i = getIntent();
+            if (i.getExtras().containsKey("id")) {
+                id = i.getExtras().getLong("id");
+            }
+            Utilidades.devolucion.setId(id);
+
+            if (i.getExtras().containsKey("codigo")) {
+                Utilidades.devolucion.setCodigo(i.getExtras().getString("codigo"));
+            }
+            if (i.getExtras().containsKey("nombre")) {
+                Utilidades.devolucion.setNombre(i.getExtras().getString("nombre"));
+            }
+
+        }
+        else{
+
+            this.id=savedInstanceState.getLong(ID);
+
+            this.actualFragment=savedInstanceState.getInt(ACTUAL_FRAGMENT);
+
+            Utilidades.devolucion = new Devolucion();
+            Utilidades.devolucion.setId(id);
+
+            this.devolucionFragment=Utilidades.devolFrag;
+            Utilidades.devolFrag=null;
+
+            this.lineaFragment=Utilidades.lineaFrag;
+            Utilidades.lineaFrag=null;
+
+        }
 
         initializeUI();
 
-        Utilidades.devolucion=new Devolucion();
-
-        id=0;
-        Intent i=getIntent();
-        if(i.getExtras().containsKey("id")){
-            id=i.getExtras().getLong("id");
-        }
-        Utilidades.devolucion.setId(id);
-
-        if(i.getExtras().containsKey("codigo")){
-            Utilidades.devolucion.setCodigo(i.getExtras().getString("codigo"));
-        }
-        if(i.getExtras().containsKey("nombre")){
-            Utilidades.devolucion.setNombre(i.getExtras().getString("nombre"));
-        }
     }
 
     /**
@@ -98,7 +128,12 @@ public class DevolucionActivity extends AppCompatActivity {
 
         this.coordinatorLayout=(CoordinatorLayout)findViewById(R.id.clayout_devol);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, devolucionFragment).commit();
+        if (actualFragment == 0) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, devolucionFragment).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
+        }
+
     }
 
     /**
@@ -218,6 +253,21 @@ public class DevolucionActivity extends AppCompatActivity {
                 procesarCodigoBarras(codigoBarras);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putLong(ID,this.id);
+        savedInstanceState.putInt(ACTUAL_FRAGMENT,this.actualFragment);
+
+        Utilidades.devolFrag=devolucionFragment;
+        if(lineaFragment!=null) {
+            Utilidades.lineaFrag = lineaFragment;
+        }
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     /**

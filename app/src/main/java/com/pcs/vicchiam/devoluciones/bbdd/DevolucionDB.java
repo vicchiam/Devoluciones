@@ -173,16 +173,16 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * @param observacion
      * @return
      */
-    public Devolucion insertarDevolucion(String codigo, String razon, String observacion){
+    public long insertarDevolucion(String codigo, String razon, String observacion){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put("codigo",codigo);
         cv.put("razon",razon);
         cv.put("observacion",observacion);
         long id=db.insert(TABLE_NAME_DEVOLUCION,null,cv);
-        Devolucion dev=new Devolucion(codigo, razon, observacion);
-        dev.setId(id);
-        return dev;
+        //Devolucion dev=new Devolucion(codigo, razon, observacion);
+        //dev.setId(id);
+        return id;
     }
 
     /**
@@ -288,7 +288,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * @param id_devolucion
      * @return
      */
-    public Linea insertarLinea(String codigo, String descripcion, double cantidad, String umv, String lote, String caducidad, String accion, String motivo, long id_devolucion){
+    public long insertarLinea(String codigo, String descripcion, double cantidad, String umv, String lote, String caducidad, String accion, String motivo, long id_devolucion){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put("codigo",codigo);
@@ -301,9 +301,9 @@ public class DevolucionDB extends SQLiteOpenHelper{
         cv.put("motivo",motivo);
         cv.put("id_devolucion",id_devolucion);
         long id=db.insert(TABLE_NAME_LINEA,null,cv);
-        Linea linea=new Linea(codigo,descripcion,cantidad,umv,lote,caducidad,accion,motivo);
-        linea.setId(id);
-        return linea;
+        //Linea linea=new Linea(codigo,descripcion,cantidad,umv,lote,caducidad,accion,motivo);
+        //linea.setId(id);
+        return id;
     }
 
     /**
@@ -316,12 +316,12 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * @param caducidad
      * @param accion
      * @param motivo
-     * @param id_devolucion
      * @return
      */
-    public Linea remplazarLinea(String codigo, String descripcion, double cantidad, String umv, String lote, String caducidad, String accion, String motivo, long id_devolucion){
+    public long remplazarLinea(long id,String codigo, String descripcion, double cantidad, String umv, String lote, String caducidad, String accion, String motivo){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
+        cv.put("id",id);
         cv.put("codigo",codigo);
         cv.put("razon",descripcion);
         cv.put("cantidad",cantidad);
@@ -330,9 +330,8 @@ public class DevolucionDB extends SQLiteOpenHelper{
         cv.put("caducidad",caducidad);
         cv.put("accion",accion);
         cv.put("motivo",motivo);
-        cv.put("id_devolucion",id_devolucion);
         db.replace(TABLE_NAME_LINEA,null,cv);
-        return new Linea(codigo,descripcion,cantidad,umv,lote,caducidad,accion,motivo);
+        return id;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.pcs.vicchiam.devoluciones.bbdd;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,10 @@ public class Devolucion {
      * Constructor that create a empty objetc
      */
     public Devolucion(){
+        this.id=0;
+        this.codigo="";
+        this.nombre="";
+        this.observacion="";
         this.lineas=new ArrayList<>();
         this.adjuntos=new ArrayList<>();
     }
@@ -80,7 +85,7 @@ public class Devolucion {
         this.lineas = lineas;
     }
 
-    public void setLinea(Linea linea){
+    public void setLinea(Linea linea, DevolucionDB db, long id_devol){
         int pos=-1;
         for(int i=0;i<lineas.size() && linea.getId()!=0;i++){
             if(linea.getId()==lineas.get(i).getId()){
@@ -88,12 +93,20 @@ public class Devolucion {
                 break;
             }
         }
-        if(pos>=0)
+        if(pos>=0) {
             lineas.remove(pos);
+        }
         lineas.add(linea);
+        if(id_devol==0){
+            linea.agregar(db,id_devol);
+        }
+        else{
+            linea.modificar(db);
+        }
+
     }
 
-    public void replace(Linea linea, int pos){
+    public void replace(Linea linea, int pos, DevolucionDB db){
         lineas.remove(pos);
         lineas.add(pos,linea);
     }
@@ -134,7 +147,23 @@ public class Devolucion {
     public boolean tieneCambios(Devolucion devolucion){
         if(!this.getCodigo().equals(devolucion.getCodigo())) return true;
         if(!this.getNombre().equals(devolucion.getNombre())) return true;
+        if(id==0 && lineas.size()>0) return true;
         return false;
+    }
+
+    public void agregar(DevolucionDB db){
+        long id=db.insertarDevolucion(codigo,nombre,observacion);
+        for(Linea l : lineas){
+            l.agregar(db,id);
+        }
+    }
+
+    public void modificar(DevolucionDB db){
+        db.remplazarDevolucion(id,codigo,nombre,observacion);
+    }
+
+    public void eliminar(DevolucionDB db){
+        db.eliminarDevolucion(id);
     }
 
 }

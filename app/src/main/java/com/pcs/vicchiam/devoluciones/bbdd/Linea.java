@@ -139,4 +139,16 @@ public class Linea {
         return false;
     }
 
+    public void agregar(DevolucionDB db, long id_devol){
+        db.insertarLinea(codigo,nombre,cantidad,umv,lote,fecha,accion,motivo,id_devol);
+    }
+
+    public void modificar(DevolucionDB db){
+        db.remplazarLinea(id,codigo,nombre,cantidad,umv,lote,fecha,accion,motivo);
+    }
+
+    public void eliminar(DevolucionDB db){
+        db.eliminarLinea(id);
+    }
+
 }
