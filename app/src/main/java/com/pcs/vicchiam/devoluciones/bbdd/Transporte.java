@@ -1,6 +1,7 @@
 package com.pcs.vicchiam.devoluciones.bbdd;
 
 import android.database.Cursor;
+import android.util.Log;
 
 /**
  * Created by victor on 02/06/2016.
@@ -27,6 +28,7 @@ public class Transporte {
         this.nombre=cursor.getString(cursor.getColumnIndex(TransporteBD.COLS[2]));
         this.fecha=cursor.getString(cursor.getColumnIndex(TransporteBD.COLS[3]));
         this.obs=cursor.getString(cursor.getColumnIndex(TransporteBD.COLS[4]));
+        //Log.e("TRANS",albaran+" - "+cursor.getLong(5)+"");
     }
 
     public long getId() {

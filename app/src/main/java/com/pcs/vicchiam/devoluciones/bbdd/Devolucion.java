@@ -3,6 +3,8 @@ package com.pcs.vicchiam.devoluciones.bbdd;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,9 @@ public class Devolucion {
     private String codigo;
     private String nombre;
     private String observacion;
+    private String fecha;
+    private long id_transporte;
+    private long id_servidor;
     private List<Linea> lineas;
     private List<Adjunto> adjuntos;
 
@@ -27,6 +32,9 @@ public class Devolucion {
         this.codigo="";
         this.nombre="";
         this.observacion="";
+        this.fecha=Utilidades.hoy();
+        this.id_transporte=0;
+        this.id_servidor=0;
         this.lineas=new ArrayList<>();
         this.adjuntos=new ArrayList<>();
     }
@@ -36,6 +44,9 @@ public class Devolucion {
         this.codigo = codigo;
         this.nombre = nombre;
         this.observacion=observacion;
+        this.fecha=Utilidades.hoy();
+        this.id_transporte=0;
+        this.id_servidor=0;
         this.lineas=new ArrayList<>();
         this.adjuntos=new ArrayList<>();
     }
@@ -45,6 +56,10 @@ public class Devolucion {
         this.codigo=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[1]));
         this.nombre=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[2]));
         this.observacion=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[3]));
+        this.fecha=cursor.getString(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[4]));
+
+        this.id_transporte=cursor.getLong(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[6]));
+        this.id_servidor=cursor.getLong(cursor.getColumnIndex(DevolucionDB.COLS_DEVOLUCION[7]));
         this.lineas=new ArrayList<>();
         this.adjuntos=new ArrayList<>();
     }
@@ -77,6 +92,30 @@ public class Devolucion {
         this.observacion = observacion;
     }
 
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public long getId_transporte() {
+        return id_transporte;
+    }
+
+    public void setId_transporte(long id_transporte) {
+        this.id_transporte = id_transporte;
+    }
+
+    public long getId_servidor() {
+        return id_servidor;
+    }
+
+    public void setId_servidor(long id_servidor) {
+        this.id_servidor = id_servidor;
+    }
+
     public List<Linea> getLineas() {
         return lineas;
     }
@@ -85,7 +124,7 @@ public class Devolucion {
         this.lineas = lineas;
     }
 
-    public void setLinea(Linea linea, DevolucionDB db, long id_devol){
+    public void setLinea(Linea linea, DevolucionDB db){
         int pos=-1;
         for(int i=0;i<lineas.size() && linea.getId()!=0;i++){
             if(linea.getId()==lineas.get(i).getId()){
@@ -97,16 +136,21 @@ public class Devolucion {
             lineas.remove(pos);
         }
         lineas.add(linea);
-        if(id_devol==0){
-            linea.agregar(db,id_devol);
-        }
-        else{
-            linea.modificar(db);
+
+        if(id>0) {
+            if (linea.getId() == 0) {
+                linea.agregar(db, id);
+            } else {
+                linea.modificar(db);
+            }
         }
 
     }
 
-    public void replace(Linea linea, int pos, DevolucionDB db){
+    public void actualizarLinea(Linea linea, int pos, DevolucionDB db){
+        if(id>0) {
+            linea.modificar(db);
+        }
         lineas.remove(pos);
         lineas.add(pos,linea);
     }
@@ -119,7 +163,10 @@ public class Devolucion {
         return null;
     }
 
-    public void removeLinea(int pos){
+    public void eliminarLinea(int pos, DevolucionDB db){
+        if(lineas.get(pos).getId()>0){
+            db.eliminarLinea(lineas.get(pos).getId());
+        }
         lineas.remove(pos);
     }
 
@@ -152,18 +199,56 @@ public class Devolucion {
     }
 
     public void agregar(DevolucionDB db){
-        long id=db.insertarDevolucion(codigo,nombre,observacion);
+        long id=db.insertarDevolucion(codigo,nombre,observacion,id_transporte);
         for(Linea l : lineas){
             l.agregar(db,id);
         }
+        this.id=id;
     }
 
     public void modificar(DevolucionDB db){
-        db.remplazarDevolucion(id,codigo,nombre,observacion);
+        db.remplazarDevolucion(id,codigo,nombre,observacion,id_transporte);
     }
 
     public void eliminar(DevolucionDB db){
         db.eliminarDevolucion(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Devolucion{" +
+                "id=" + id +
+                ", codigo='" + codigo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", observacion='" + observacion + '\'' +
+                ", fecha='" + fecha + '\'' +
+                ", id_transporte=" + id_transporte +
+                ", id_servidor=" + id_servidor +
+                ", lineas=" + lineas +
+                ", adjuntos=" + adjuntos +
+                '}';
+    }
+
+    public String toJSON(){
+        String l="";
+        for(int i=0;i<lineas.size();i++){
+            if(i>0){
+                l+=",";
+            }
+            l+=lineas.get(i).toJSON();
+        }
+
+        String res="{" +
+                "\"codigo\":\""+codigo+"\","+
+                "\"nombre\":\""+nombre+"\","+
+                "\"observacion\":\""+observacion+"\","+
+                "\"fecha\":\""+fecha+"\","+
+                "\"id_transporte\":"+id_transporte+","+
+                "\"id\":"+id_servidor+","+
+                "\"lineas\":["+l+"]}";
+
+        return res;
+
     }
 
 }

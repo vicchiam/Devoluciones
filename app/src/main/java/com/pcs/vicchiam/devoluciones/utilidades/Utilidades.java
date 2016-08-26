@@ -60,6 +60,7 @@ public class Utilidades {
     public static final int FINALIZAR_DEVOLUCIONES_TRANSPORTE=10;
     public static final int OBTENER_DEVOLUCIONES_TRANSPORTE_LISTADO=11;
     public static final int FINALIZAR_DEVOLUCIONES_TRANSPORTE_LISTADO=12;
+    public static final int ENVIAR_DEVOLUCION=13;
 
 
     //AsyncDatabaseType
@@ -68,6 +69,13 @@ public class Utilidades {
 
     //Semaforo
     public static Semaforo SEMAFORO=new Semaforo();
+
+    //Estado devolucion 1-Enviada, 2-No Enviada
+    public static int ESTADO_DEVOLUCION=0;
+
+    //Devolucion enviada
+    public static final int NO_ENVIADO=0;
+    public static final int ENVIADO=1;
 
     /**
      * Method that make the alerts
@@ -270,6 +278,10 @@ public class Utilidades {
         return true;
     }
 
-
+    public static String hoy(){
+        SimpleDateFormat f=new SimpleDateFormat("yyyy-MM-dd");
+        Date d=new Date();
+        return f.format(d);
+    }
 
 }

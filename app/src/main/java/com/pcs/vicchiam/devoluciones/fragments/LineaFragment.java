@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.pcs.vicchiam.devoluciones.DevolucionActivity;
 import com.pcs.vicchiam.devoluciones.R;
+import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
 import com.pcs.vicchiam.devoluciones.bbdd.DevolucionDB;
 import com.pcs.vicchiam.devoluciones.bbdd.Linea;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
@@ -38,6 +39,8 @@ public class LineaFragment extends Fragment {
     private RelativeLayout layoutCaducidad, layoutAccion, layoutMotivo;
     private int position;
     private Linea linea;
+
+    private DevolucionDB db;
 
     /**
      * Create instance on LineaFragment
@@ -84,6 +87,9 @@ public class LineaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view=inflater.inflate(R.layout.linea_fragment,container,false);
+
+        db=new DevolucionDB(devolucionActivity);
+
         editCodigo=(EditText)view.findViewById(R.id.edit_codigo_art);
         editNombre=(EditText)view.findViewById(R.id.edit_descr_art);
         editCantidad=(EditText)view.findViewById(R.id.edit_cantidad_art);
@@ -206,7 +212,6 @@ public class LineaFragment extends Fragment {
      * @return can save or not
      */
     public boolean guardar(){
-        DevolucionDB devolucionDB=new DevolucionDB(this.devolucionActivity);
         this.linea=leerLinea();
         if(linea.getCodigo().equals("")){
             Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.linea_e_codigo),Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
@@ -217,10 +222,10 @@ public class LineaFragment extends Fragment {
             return false;
         }
         if(this.position==-1){
-            Utilidades.devolucion.setLinea(linea, devolucionDB);
+            Utilidades.devolucion.setLinea(linea, db);
         }
         else{
-            Utilidades.devolucion.replace(linea,position, devolucionDB);
+            Utilidades.devolucion.actualizarLinea(linea,position, db);
         }
         return true;
     }
@@ -261,7 +266,9 @@ public class LineaFragment extends Fragment {
         String fecha=textCaducidad.getText().toString();
         String accion=textAccion.getText().toString();
         String motivo=textMotivo.getText().toString();
-        return new Linea(codigo,nombre,cantidad,umv,lote,fecha,accion,motivo);
+        Linea res= new Linea(codigo,nombre,cantidad,umv,lote,fecha,accion,motivo);
+        res.setId(linea.getId());
+        return res;
     }
 
     /**

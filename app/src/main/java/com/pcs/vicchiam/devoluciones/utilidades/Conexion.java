@@ -52,9 +52,14 @@ public class Conexion extends AsyncTask<HashMap<String,String>,Void,String>{
 
     @Override
     protected void onPreExecute() {
-        if(this.tipo!=Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE_LISTADO) {
+        if(this.tipo!=Utilidades.OBTENER_DEVOLUCIONES_TRANSPORTE_LISTADO && this.tipo!=Utilidades.ENVIAR_DEVOLUCION) {
             this.dialog.setTitle(activity.getResources().getString(R.string.progress_title));
             this.dialog.setMessage(activity.getResources().getString(R.string.progress_msj));
+            this.dialog.show();
+        }
+        else if(this.tipo==Utilidades.ENVIAR_DEVOLUCION){
+            this.dialog.setTitle(activity.getResources().getString(R.string.progress_title));
+            this.dialog.setMessage(activity.getResources().getString(R.string.progress_msj_send));
             this.dialog.show();
         }
     }

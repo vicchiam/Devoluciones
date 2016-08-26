@@ -19,9 +19,9 @@ public class TransporteBD extends SQLiteOpenHelper{
 
     public static final String TABLE_NAME="transporte";
 
-    public static final String[] COLS={"albaran","cliente","nombre","fecha","obs","id_devolucion"};
+    public static final String[] COLS={"id","cliente","nombre","fecha","obs"};
 
-    public static final String[] COLS_TYPE={"INTEGER","TEXT","TEXT","TEXT","TEXT","INTEGER"};
+    public static final String[] COLS_TYPE={"INTEGER PRIMARY KEY","TEXT","TEXT","TEXT","TEXT"};
 
     /**
      * Make a create Transporte table SQL
@@ -41,7 +41,6 @@ public class TransporteBD extends SQLiteOpenHelper{
 
     public TransporteBD(Context context){
         super(context,DATABASE_NAME,null,1);
-        getWritableDatabase();
     }
 
     @Override
@@ -64,34 +63,23 @@ public class TransporteBD extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    /**
-     * Get all Transports
-     * @return list of transports
-     */
-    public List<Transporte> obtenerTodosTransporte(){
+    public List<Transporte> obtenerTransporte(){
         List<Transporte> list=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
-        Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME+" ORDER BY fecha DESC"  ,null);
+        Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME+" ORDER BY fecha DESC",null);
         return prepararTransporte(res);
     }
 
-    public Transporte insertarTransporte(long albaran, String cliente, String nombre, String fecha, String obs){
+    public Transporte insertarTransporte(long id, String cliente, String nombre, String fecha, String obs){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put("albaran",albaran);
+        cv.put("id",id);
         cv.put("cliente",cliente);
         cv.put("nombre",nombre);
         cv.put("fecha",fecha);
         cv.put("obs",obs);
-        db.insertWithOnConflict(TABLE_NAME,null,cv,SQLiteDatabase.CONFLICT_IGNORE);
-        return new Transporte(albaran, cliente, nombre, fecha, obs);
-    }
-
-    public void modificarDevolucionTransporte(long albaran, long id_devolucion){
-        SQLiteDatabase db=this.getWritableDatabase();
-        ContentValues cv=new ContentValues();
-        cv.put("id_devolucion",id_devolucion);
-        db.update(TABLE_NAME,cv,"albaran="+albaran,null);
+        db.insert(TABLE_NAME,null,cv);
+        return new Transporte(id, cliente, nombre, fecha, obs);
     }
 
     /**

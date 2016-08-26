@@ -13,14 +13,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pcs.vicchiam.devoluciones.adapters.PaginaAdapter;
+import com.pcs.vicchiam.devoluciones.fragments.EnviarFragment;
+import com.pcs.vicchiam.devoluciones.fragments.HistoricoFragment;
 import com.pcs.vicchiam.devoluciones.fragments.ProcesarFragment;
 import com.pcs.vicchiam.devoluciones.utilidades.Logica;
+import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
 /**
  * Created by vicchiam on 01/05/2016.
@@ -28,6 +32,8 @@ import com.pcs.vicchiam.devoluciones.utilidades.Logica;
  */
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+
+    public final static int ABRIR_DEVOLUCION=1;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -99,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menu_nuevo: {
                 Intent intent=new Intent(self,DevolucionActivity.class);
                 intent.putExtra("id",0);
-                self.startActivity(intent);
+                self.startActivityForResult(intent,ABRIR_DEVOLUCION);
                 break;
             }
         }
@@ -160,7 +166,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        if(requestCode==ABRIR_DEVOLUCION){
+            if(resultCode==RESULT_OK){
+                if(Utilidades.ESTADO_DEVOLUCION==1){
+                    Utilidades.crearSnackBar(this.coordinatorLayout,getResources().getString(R.string.devol_guardada));
+                    Utilidades.ESTADO_DEVOLUCION=0;
+                }
+                else if(Utilidades.ESTADO_DEVOLUCION==2){
+                    Utilidades.Alerts(this,"Error","No se ha podido enviar", Utilidades.TIPO_ADVERTENCIA_NEUTRAL,null);
+                    Utilidades.ESTADO_DEVOLUCION=0;
+                }
+                actualizar();
+            }
+        }
     }
 
     /*MIS METODOS**********************************************************************************/
@@ -169,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Initialize the application
      */
     private void iniApp(){
-        logica=Logica.getInstance(self);
+        logica=new Logica(self);
     }
 
     /**
@@ -182,15 +200,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Update the viewpager fragments
-     * @param pos
      */
-    public void actualizar(int pos){
+    public void actualizar(){
         PaginaAdapter adapter=(PaginaAdapter)viewPager.getAdapter();
-        Fragment f=adapter.getItem(pos);
-        if(f instanceof ProcesarFragment){
-            ProcesarFragment pf=(ProcesarFragment)f;
-            pf.actualizarListado();
-        }
+        adapter.actualizar();
     }
 
     public void abrirDevolucion(String codigo, String nombre, long id){
@@ -199,7 +212,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intent.putExtra("codigo",codigo);
         intent.putExtra("nombre",nombre);
         intent.putExtra("id_trasporte",id);
-        self.startActivity(intent);
+        self.startActivityForResult(intent,ABRIR_DEVOLUCION);
+    }
+
+    public void abrirDevolucion(long id){
+        Intent intent=new Intent(self,DevolucionActivity.class);
+        intent.putExtra("id",id);
+        self.startActivityForResult(intent,ABRIR_DEVOLUCION);
     }
 
 

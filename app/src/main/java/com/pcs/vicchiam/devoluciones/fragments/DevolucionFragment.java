@@ -32,6 +32,8 @@ public class DevolucionFragment extends Fragment {
     private ItemLineaAdapter itemLineaAdapter;
     private ListView listView;
 
+    private DevolucionDB db;
+
     /**
      * Create a object Cabecera frgament
      * @param arguments id of the devolution
@@ -67,6 +69,9 @@ public class DevolucionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view=inflater.inflate(R.layout.devolucion_fragment,container,false);
+
+        db = new DevolucionDB(this.devolucionActivity);
+
         editCodigo=(EditText) view.findViewById(R.id.edit_codigo);
         editRazon=(EditText) view.findViewById(R.id.edit_razon);
 
@@ -93,7 +98,7 @@ public class DevolucionFragment extends Fragment {
                         .setPositiveButton("Borrar", new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Utilidades.devolucion.removeLinea(position);
+                                Utilidades.devolucion.eliminarLinea(position,db);
                                 refresh();
                             }
                         })
@@ -163,19 +168,29 @@ public class DevolucionFragment extends Fragment {
     /**
      * Save in a object Devolucion the data of the editText
      */
-    public void guardar(){
-        DevolucionDB devolucionDB=new DevolucionDB(this.devolucionActivity);
+    public boolean guardar() {
 
-        String codigo=editCodigo.getText().toString();
-        String nombre=editRazon.getText().toString();
+        String codigo = editCodigo.getText().toString();
+        String nombre = editRazon.getText().toString();
+
+        if (codigo.equals("")){
+            Utilidades.Alerts(devolucionActivity, null, getResources().getString(R.string.devol_e_codigo), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);
+            return false;
+        }
+        if(Utilidades.devolucion.getLineas().size()==0){
+            Utilidades.Alerts(devolucionActivity, null, getResources().getString(R.string.devol_e_linea), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);
+            return false;
+        }
+
         Utilidades.devolucion.setCodigo(codigo);
         Utilidades.devolucion.setNombre(nombre);
         if(Utilidades.devolucion.getId()==0){
-            Utilidades.devolucion.agregar(devolucionDB);
+            Utilidades.devolucion.agregar(db);
         }
         else if(Utilidades.devolucion.getId()>0){
-            Utilidades.devolucion.modificar(devolucionDB);
+            Utilidades.devolucion.modificar(db);
         }
+        return true;
     }
 
     /**

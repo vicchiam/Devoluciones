@@ -29,8 +29,11 @@ import com.pcs.vicchiam.devoluciones.bbdd.Articulo;
 import com.pcs.vicchiam.devoluciones.bbdd.ArticuloDB;
 import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
+import com.pcs.vicchiam.devoluciones.bbdd.DevolucionDB;
+import com.pcs.vicchiam.devoluciones.bbdd.TransporteBD;
 import com.pcs.vicchiam.devoluciones.fragments.DevolucionFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
+import com.pcs.vicchiam.devoluciones.utilidades.Logica;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
 import java.util.List;
@@ -69,20 +72,36 @@ public class DevolucionActivity extends AppCompatActivity {
 
             actualFragment = 0;
 
-            Utilidades.devolucion = new Devolucion();
-
             id = 0;
             Intent i = getIntent();
             if (i.getExtras().containsKey("id")) {
                 id = i.getExtras().getLong("id");
             }
-            Utilidades.devolucion.setId(id);
 
-            if (i.getExtras().containsKey("codigo")) {
-                Utilidades.devolucion.setCodigo(i.getExtras().getString("codigo"));
+            if(id==0) {
+
+                Utilidades.devolucion = new Devolucion();
+
+                Utilidades.devolucion.setId(id);
+
+                if (i.getExtras().containsKey("codigo")) {
+                    Utilidades.devolucion.setCodigo(i.getExtras().getString("codigo"));
+                }
+                if (i.getExtras().containsKey("nombre")) {
+                    Utilidades.devolucion.setNombre(i.getExtras().getString("nombre"));
+                }
+                if (i.getExtras().containsKey("id_trasporte")) {
+                    long id_trasporte = i.getExtras().getLong("id_trasporte");
+                    Utilidades.devolucion.setId_transporte(id_trasporte);
+                }
             }
-            if (i.getExtras().containsKey("nombre")) {
-                Utilidades.devolucion.setNombre(i.getExtras().getString("nombre"));
+            else{
+
+                DevolucionDB db=new DevolucionDB(this);
+
+                Utilidades.devolucion=db.buscarDevolucionId(id);
+                Utilidades.devolucion.setLineas(db.obtenerTodosLineas(id));
+
             }
 
         }
@@ -92,8 +111,8 @@ public class DevolucionActivity extends AppCompatActivity {
 
             this.actualFragment=savedInstanceState.getInt(ACTUAL_FRAGMENT);
 
-            Utilidades.devolucion = new Devolucion();
-            Utilidades.devolucion.setId(id);
+            //Utilidades.devolucion = new Devolucion();
+            //Utilidades.devolucion.setId(id);
 
             this.devolucionFragment=Utilidades.devolFrag;
             Utilidades.devolFrag=null;
@@ -320,7 +339,10 @@ public class DevolucionActivity extends AppCompatActivity {
     private void guardar(){
         //Save a data
         if(actualFragment==0){
-            devolucionFragment.guardar();
+            if(devolucionFragment.guardar()){
+                Logica l=new Logica(this);
+                l.enviarDevolucion();
+            }
         }
         else{
             if(lineaFragment.guardar()){
@@ -333,6 +355,22 @@ public class DevolucionActivity extends AppCompatActivity {
         //Hide keyboard
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(coordinatorLayout.getWindowToken(), 0);
+    }
+
+    public void finalizarDevolucion(String respuesta){
+        Log.e("Respuesta",respuesta);
+        if(Utilidades.esNumero(respuesta)){
+            Long id_servidor=Long.parseLong(respuesta);
+            DevolucionDB db=new DevolucionDB(this);
+            db.agregarDevolucionIdServidor(Utilidades.devolucion.getId(),id_servidor);
+            Utilidades.ESTADO_DEVOLUCION=1;
+        }
+        else{
+            Utilidades.ESTADO_DEVOLUCION=2;
+        }
+        Utilidades.devolucion=null;
+        setResult(RESULT_OK);
+        finish();
     }
 
     /**

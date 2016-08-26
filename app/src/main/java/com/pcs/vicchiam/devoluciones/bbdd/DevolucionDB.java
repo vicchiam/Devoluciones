@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +26,8 @@ public class DevolucionDB extends SQLiteOpenHelper{
     public static final String TABLE_NAME_LINEA="linea";
     public static final String TABLE_NAME_ADJUNTO="adjunto";
 
-    public static final String[] COLS_DEVOLUCION={"id","codigo","cliente","razon","observacion","tipo","id_transporte"};
-    public static final String[] COLS_TYPE_DEVOLUCION={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","TEXT","TEXT","INTEGER","INTEGER"};
+    public static final String[] COLS_DEVOLUCION={"id","codigo","razon","observacion","fecha","tipo","id_transporte","id_servidor"};
+    public static final String[] COLS_TYPE_DEVOLUCION={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","TEXT","TEXT","INTEGER","INTEGER","INTEGER"};
 
     public static final String[] COLS_LINEA={"id","codigo","descripcion","cantidad","umv","lote","caducidad","accion","motivo","id_devolucion"};
     public static final String[] COLS_TYPE_LINEA={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","TEXT","NUMBER","TEXT","TEXT","TEXT","TEXT","TEXT","INTEGER"};
@@ -33,7 +35,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
     public static final String[] COLS_ADJUNTO={"id","path","id_devolucion"};
     public static final String[] COLS_TYPE_ADJUNTO={"INTEGER PRIMARY KEY AUTOINCREMENT","TEXT","INTEGER"};
 
-    public static final String FOREIGN_KEY_LINEA=" FOREIGN KEY(id_devolucion) REFERENCES devolucion(id)";
+    public static final String FOREIGN_KEY_LINEA=" FOREIGN KEY(id_devolucion) REFERENCES devolucion(id) ON DELETE CASCADE";
 
     /**
      * Make a create Devolution table SQL
@@ -153,6 +155,20 @@ public class DevolucionDB extends SQLiteOpenHelper{
         return new Devolucion(cursor);
     }
 
+    public  List<Devolucion> obtenerDevolucionesNoEnviadas(){
+        List<Devolucion> list=new ArrayList<>();
+        SQLiteDatabase db=this.getReadableDatabase();
+        Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_DEVOLUCION+" WHERE id_servidor=0",null);
+        return this.prepararListadoDevoluciones(res);
+    }
+
+    public  List<Devolucion> obtenerDevolucionesEnviadas(){
+        List<Devolucion> list=new ArrayList<>();
+        SQLiteDatabase db=this.getReadableDatabase();
+        Cursor res=db.rawQuery("SELECT * FROM "+TABLE_NAME_DEVOLUCION+" WHERE id_servidor<>0",null);
+        return this.prepararListadoDevoluciones(res);
+    }
+
     /**
      * Make a data of the autocomplet widget
      * @param columna column that search
@@ -173,12 +189,15 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * @param observacion
      * @return
      */
-    public long insertarDevolucion(String codigo, String razon, String observacion){
+    public long insertarDevolucion(String codigo, String razon, String observacion, long id_trans){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put("codigo",codigo);
         cv.put("razon",razon);
         cv.put("observacion",observacion);
+        cv.put("fecha",Utilidades.hoy());
+        cv.put("id_transporte",id_trans);
+        cv.put("id_servidor",0);
         long id=db.insert(TABLE_NAME_DEVOLUCION,null,cv);
         //Devolucion dev=new Devolucion(codigo, razon, observacion);
         //dev.setId(id);
@@ -192,24 +211,27 @@ public class DevolucionDB extends SQLiteOpenHelper{
      * @param observacion
      * @return
      */
-    public Devolucion remplazarDevolucion(long id, String codigo, String razon,String observacion){
+    public long remplazarDevolucion(long id, String codigo, String razon, String observacion, long id_trans){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put("id",id);
         cv.put("codigo",codigo);
         cv.put("razon",razon);
         cv.put("observacion",observacion);
-        db.replace(TABLE_NAME_DEVOLUCION,null,cv);
-        return new Devolucion(codigo, razon, observacion);
+        cv.put("fecha",Utilidades.hoy());
+        cv.put("id_transporte",id_trans);
+        db.update(TABLE_NAME_DEVOLUCION,cv,"id="+id,null);
+        return id;
     }
 
-    public void modificarIdTrasporte(long id, long id_trans){
+    public void agregarDevolucionIdServidor(long id, long id_servidor){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put("id",id);
-        db.replace(TABLE_NAME_DEVOLUCION,null,cv);
+        cv.put("id_servidor",id_servidor);
+        db.update(TABLE_NAME_DEVOLUCION,cv,"id="+id,null);
+        db.close();
     }
 
+    /*
     public boolean existeTrasporte(long id_transporte){
         List<Devolucion> list=new ArrayList<>();
         SQLiteDatabase db=this.getReadableDatabase();
@@ -220,6 +242,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
         cursor.close();
         return (res>0);
     }
+    */
 
     /**
      * Delete a devolution in dtatabse
@@ -292,7 +315,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put("codigo",codigo);
-        cv.put("razon",descripcion);
+        cv.put("descripcion",descripcion);
         cv.put("cantidad",cantidad);
         cv.put("umv",umv);
         cv.put("lote",lote);
@@ -321,9 +344,8 @@ public class DevolucionDB extends SQLiteOpenHelper{
     public long remplazarLinea(long id,String codigo, String descripcion, double cantidad, String umv, String lote, String caducidad, String accion, String motivo){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put("id",id);
         cv.put("codigo",codigo);
-        cv.put("razon",descripcion);
+        cv.put("descripcion",descripcion);
         cv.put("cantidad",cantidad);
         cv.put("umv",umv);
         cv.put("lote",lote);
@@ -331,6 +353,7 @@ public class DevolucionDB extends SQLiteOpenHelper{
         cv.put("accion",accion);
         cv.put("motivo",motivo);
         db.replace(TABLE_NAME_LINEA,null,cv);
+        db.update(TABLE_NAME_LINEA,cv,"id="+id,null);
         return id;
     }
 
@@ -430,6 +453,8 @@ public class DevolucionDB extends SQLiteOpenHelper{
     }
 
     /**********************************************************************************************/
+
+
 
 
 }

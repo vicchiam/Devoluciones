@@ -103,15 +103,20 @@ public class ProcesarFragment extends Fragment implements RespuestaServidor {
             if(transporteBD==null){
                 transporteBD=new TransporteBD(this.getContext());
             }
-            List<Transporte> lista = transporteBD.obtenerTodosTransporte();
-            itemProcesarAdapter.setListado(lista);
-            listView.invalidateViews();
+            try {
+                List<Transporte> lista = transporteBD.obtenerTransporte();
+                itemProcesarAdapter.setListado(lista);
+                listView.invalidateViews();
+            }
+            catch(Exception e){
+
+            }
         }
     }
 
     private void actualizar(){
         HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("operacion","obtener_devoluciones");
+        hashMap.put("operacion","obtener_transportes");
 
         String recurso= Utilidades.comprobarRecursos(this.mainActivity);
 
@@ -132,6 +137,7 @@ public class ProcesarFragment extends Fragment implements RespuestaServidor {
 
     @Override
     public void respuesta(int tipo, String respuesta) {
+        Log.e("TRANS",respuesta);
         switch (tipo) {
             case Utilidades.ERROR_BASE_DATOS: {
                 Utilidades.Alerts(mainActivity, null, mainActivity.getResources().getString(R.string.database_err), Utilidades.TIPO_ADVERTENCIA_NEUTRAL, null);

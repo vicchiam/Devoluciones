@@ -41,6 +41,7 @@
     <string name="progress_title">Espere</string>
     <string name="progress_msj">Obteniendo Datos...</string>
     <string name="progress_msj_save">Guardando datos...</string>
+    <string name="progress_msj_send">Enviando datos...</string>
 
     <!-- DEVOLUCION***************************************************************************** -->
     <string name="devol_codigo">Codigo Cliente</string>
@@ -68,6 +69,9 @@
     <!-- MENU DEVOLUCION********************************************************************************* -->
     <string name="buscar">Buscar</string>
     <string name="guardar">Guardar</string>
+    <string name="devol_guardada">Devolución guardada correctamente</string>
+    <string name="devol_e_codigo">Debes indicar un código</string>
+    <string name="devol_e_linea">Debes indicar una linea como mínimo</string>
 
     <!-- SNAKE********************************************************************************** -->
     <string name="num_clientes">Numero de clientes: %1$s</string>

@@ -18,6 +18,10 @@ public class PaginaAdapter extends FragmentPagerAdapter {
     private final int PAGE_COUNT=3;
     private Context context;
 
+    private ProcesarFragment pf;
+    private EnviarFragment ef;
+    private HistoricoFragment hf;
+
     public PaginaAdapter(FragmentManager fm, Context context){
         super(fm);
         this.context=context;
@@ -27,11 +31,11 @@ public class PaginaAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return ProcesarFragment.newInstance(position);
+                return pf=ProcesarFragment.newInstance(position);
             case 1:
-                return EnviarFragment.newInstance(position);
+                return ef=EnviarFragment.newInstance(position);
             case 2:
-                return HistoricoFragment.newInstance(position);
+                return hf=HistoricoFragment.newInstance(position);
             default:
                 return null;
         }
@@ -50,6 +54,15 @@ public class PaginaAdapter extends FragmentPagerAdapter {
             case 2: return context.getResources().getString(R.string.pagina3);
             default: return "";
         }
+    }
+
+    public void actualizar(){
+        if(pf!=null)
+            pf.actualizarListado();
+        if(ef!=null)
+            ef.actualizarListado();
+        if(hf!=null)
+            hf.actualizarListado();
     }
 
 }

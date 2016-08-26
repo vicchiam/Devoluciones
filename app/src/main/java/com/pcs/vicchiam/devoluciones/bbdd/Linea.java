@@ -127,7 +127,6 @@ public class Linea {
     }
 
     public boolean tieneCambios(Linea nueva){
-        if(this.getId()!=nueva.getId()) return true;
         if(!this.getCodigo().equals(nueva.getCodigo())) return true;
         if(!this.getNombre().equals(nueva.getNombre())) return true;
         if(this.getCantidad()!=nueva.getCantidad()) return true;
@@ -151,4 +150,29 @@ public class Linea {
         db.eliminarLinea(id);
     }
 
+    @Override
+    public String toString() {
+        return "Linea{" +
+                "id=" + id +
+                ", codigo='" + codigo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", cantidad=" + cantidad +
+                ", umv='" + umv + '\'' +
+                ", lote='" + lote + '\'' +
+                ", fecha='" + fecha + '\'' +
+                ", accion='" + accion + '\'' +
+                ", motivo='" + motivo + '\'' +
+                '}';
+    }
+
+    public String toJSON(){
+        return  "{\"codigo\":\""+codigo+"\"," +
+                "\"nombre\":\""+nombre+"\"," +
+                "\"cantidad\":"+cantidad+"," +
+                "\"umv\":\""+umv+"\","+
+                "\"lote\":\""+lote+"\","+
+                "\"fecha\":\""+fecha+"\","+
+                "\"accion\":\""+accion+"\"," +
+                "\"motivo\":\""+motivo+"\"}";
+    }
 }

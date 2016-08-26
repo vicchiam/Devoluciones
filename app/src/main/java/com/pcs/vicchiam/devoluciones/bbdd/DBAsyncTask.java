@@ -138,9 +138,7 @@ public class DBAsyncTask {
                         String obs_cal=jObj.getString("com_calidad");
                         String observacion=obs+"CALIDAD:"+obs_cal;
                         try {
-                            if (!devolucionDB.existeTrasporte(id)) {
-                                transporteBD.insertarTransporte(id, cliente, nombre, fecha, observacion);
-                            }
+                            transporteBD.insertarTransporte(id, cliente, nombre, fecha, observacion);
                         }
                         catch (Exception e){
                             Log.e("EXC",e.getMessage());
