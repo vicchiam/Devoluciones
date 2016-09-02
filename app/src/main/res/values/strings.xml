@@ -44,12 +44,20 @@
     <string name="progress_msj_send">Enviando datos...</string>
 
     <!-- DEVOLUCION***************************************************************************** -->
+    <string name="devol_title">Devolución</string>
     <string name="devol_codigo">Codigo Cliente</string>
     <string name="devol_razon">Razón Social</string>
     <string name="devol_accion">Acción a tomar</string>
     <string name="devol_motivo">Motivo</string>
 
+    <string name="devol_obs">Observaciones</string>
+    <string name="devol_obs_error">Debes indicar un texto</string>
+    <string name="devol_obs_guardada">Observación guardada</string>
+
+    <string name="devol_adj">Adjuntos</string>
+
     <!-- LINEAS********************************************************************************* -->
+    <string name="linea_title">Linea</string>
     <string name="linea_codigo">Codigo Producto</string>
     <string name="linea_descripcion">Descripción</string>
     <string name="linea_cantidad">Cantidad</string>
@@ -67,15 +75,22 @@
     <string name="linea_e_cantidad">Debes indicar una cantidad</string>
 
     <!-- MENU DEVOLUCION********************************************************************************* -->
-    <string name="buscar">Buscar</string>
-    <string name="guardar">Guardar</string>
+    <string name="devol_buscar">Buscar</string>
+    <string name="devol_guardar">Guardar</string>
+    <string name="devol_observacion">Observaciones</string>
+    <string name="devol_adjunto">Adjunto</string>
     <string name="devol_guardada">Devolución guardada correctamente</string>
     <string name="devol_e_codigo">Debes indicar un código</string>
     <string name="devol_e_linea">Debes indicar una linea como mínimo</string>
 
+    <string name="devol_adj_tamanyo">Solo se pueden añadir 12 fotos</string>
+
     <!-- SNAKE********************************************************************************** -->
     <string name="num_clientes">Numero de clientes: %1$s</string>
     <string name="num_articulos">Número de articulos: %1$s</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

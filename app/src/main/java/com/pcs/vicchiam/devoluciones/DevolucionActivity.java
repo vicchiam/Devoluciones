@@ -1,13 +1,19 @@
 package com.pcs.vicchiam.devoluciones;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -31,11 +37,14 @@ import com.pcs.vicchiam.devoluciones.bbdd.ClienteDB;
 import com.pcs.vicchiam.devoluciones.bbdd.Devolucion;
 import com.pcs.vicchiam.devoluciones.bbdd.DevolucionDB;
 import com.pcs.vicchiam.devoluciones.bbdd.TransporteBD;
+import com.pcs.vicchiam.devoluciones.fragments.AdjuntoFragment;
 import com.pcs.vicchiam.devoluciones.fragments.DevolucionFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
+import com.pcs.vicchiam.devoluciones.fragments.ObsFragment;
 import com.pcs.vicchiam.devoluciones.utilidades.Logica;
 import com.pcs.vicchiam.devoluciones.utilidades.Utilidades;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -46,8 +55,8 @@ public class DevolucionActivity extends AppCompatActivity {
 
     private static final String ID="ID";
     private static final String ACTUAL_FRAGMENT="ACTUAL_FRAGMENT";
-    private static final String DEVOL_FRAG="DEVOL_FRAG";
-    private static final String LINEA_FRAG="LINEA_FRAG";
+    public static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final int WRITE_EXTERNAL_STORAGE = 1;
 
     private DevolucionActivity self;
     private CoordinatorLayout coordinatorLayout;
@@ -57,8 +66,13 @@ public class DevolucionActivity extends AppCompatActivity {
     private SearchView searchView;
     private DevolucionFragment devolucionFragment;
     private LineaFragment lineaFragment;
+    private ObsFragment obsFragment;
+    private AdjuntoFragment adjuntoFragment;
     private int actualFragment;
     private long id;
+
+    private boolean cambio_obs;
+    private boolean cambio_adj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +138,8 @@ public class DevolucionActivity extends AppCompatActivity {
 
         initializeUI();
 
+        this.cambio_obs=false;
+
     }
 
     /**
@@ -147,10 +163,11 @@ public class DevolucionActivity extends AppCompatActivity {
 
         this.coordinatorLayout=(CoordinatorLayout)findViewById(R.id.clayout_devol);
 
-        if (actualFragment == 0) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, devolucionFragment).commit();
-        } else {
+        if(actualFragment==1){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
+        }
+        else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, devolucionFragment).commit();
         }
 
     }
@@ -163,11 +180,23 @@ public class DevolucionActivity extends AppCompatActivity {
         if (!searchView.isIconified()) {
             searchView.onActionViewCollapsed();
         } else {
-            if(actualFragment==0){
-                devolucionFragment.perderCambios();
-            }
-            else{
-                lineaFragment.perderCambios();
+            switch (actualFragment){
+                case 0:{
+                    devolucionFragment.perderCambios();
+                    break;
+                }
+                case 1:{
+                    lineaFragment.perderCambios();
+                    break;
+                }
+                case 2:{
+                    cambiarFragment(0);
+                    break;
+                }
+                case 3:{
+                    cambiarFragment(0);
+                    break;
+                }
             }
         }
     }
@@ -182,12 +211,23 @@ public class DevolucionActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             //When pressed a left button of the actionbar
             case android.R.id.home:{
-                if(actualFragment==0){
-                    devolucionFragment.perderCambios();
-                }
-                else{
-                    //If are in a fragmet line chek if have changes without save
-                    lineaFragment.perderCambios();
+                switch (actualFragment){
+                    case 0:{
+                        devolucionFragment.perderCambios();
+                        break;
+                    }
+                    case 1:{
+                        lineaFragment.perderCambios();
+                        break;
+                    }
+                    case 2:{
+                        cambiarFragment(0);
+                        break;
+                    }
+                    case 3:{
+                        cambiarFragment(0);
+                        break;
+                    }
                 }
                 break;
             }
@@ -195,9 +235,24 @@ public class DevolucionActivity extends AppCompatActivity {
                 if(actualFragment==0){
                     abrirLinea(null);
                 }
-                else{
+                else if(actualFragment==1){
                     lineaFragment.abrirBarcode();
                 }
+                else if(actualFragment==2){
+                    obsFragment.borrar();
+                }
+                else if(actualFragment==3){
+                    hacerFoto();
+                }
+                break;
+            }
+            case R.id.menu_obs_devol:{
+                cambiarFragment(2);
+                break;
+            }
+            case R.id.menu_adj_devol:{
+                cambiarFragment(3);
+                break;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -238,12 +293,12 @@ public class DevolucionActivity extends AppCompatActivity {
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor=(Cursor)searchAdapter.getItem(position);
-                if(self.actualFragment==0) {
+                if(actualFragment==0) {
                     String codigo = cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[0]));
                     String nombre = cursor.getString(cursor.getColumnIndex(ClienteDB.COLS_CLIENTE[1]));
                     devolucionFragment.actualizarCabecera(codigo, nombre);
                 }
-                else{
+                else if(actualFragment==1){
                     String codigo = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[0]));
                     String nombre = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[1]));
                     String umv = cursor.getString(cursor.getColumnIndex(ArticuloDB.COLS_ARTICULO[2]));
@@ -265,11 +320,28 @@ public class DevolucionActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() != null) {
-                String codigoBarras=result.getContents();
-                procesarCodigoBarras(codigoBarras);
+        if(requestCode == REQUEST_IMAGE_CAPTURE){
+            if (resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                Bitmap foto = (Bitmap) extras.get("data");
+
+                Uri tempUri = Utilidades.getImageUri(getApplicationContext(), foto);
+                File file = new File(Utilidades.getRealPathFromURI(getApplicationContext(),tempUri));
+
+                if(adjuntoFragment!=null){
+                    adjuntoFragment.anyadirImagen(file.getAbsolutePath());
+                }
+
+
+            }
+        }
+        else {
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (result != null) {
+                if (result.getContents() != null) {
+                    String codigoBarras = result.getContents();
+                    procesarCodigoBarras(codigoBarras);
+                }
             }
         }
     }
@@ -303,7 +375,7 @@ public class DevolucionActivity extends AppCompatActivity {
             searchAdapter = new SearchSuggestionAdapter(self, cursor, ClienteDB.COLS_CLIENTE[0], ClienteDB.COLS_CLIENTE[1]);
             searchView.setSuggestionsAdapter(searchAdapter);
         }
-        else{
+        else if(actualFragment==1){
             String campo1= ArticuloDB.COLS_ARTICULO[0];
             if(!Utilidades.esNumero(query)){
                 campo1=ArticuloDB.COLS_ARTICULO[1];
@@ -317,20 +389,63 @@ public class DevolucionActivity extends AppCompatActivity {
     /**
      * Change the fragments
      */
-    public void cambiarFragment(){
+    public void cambiarFragment(int num){
         if (!searchView.isIconified()) {
             searchView.onActionViewCollapsed();
         }
-        if(this.actualFragment==0){
-            menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_monochrome_photos_white_24dp));
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
-            actualFragment=1;
+        switch (num) {
+            case 0: {
+                getSupportActionBar().setTitle(R.string.devol_title);
+                fab.setVisibility(View.VISIBLE);
+                menu.getItem(0).setVisible(true);
+                menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp));
+                menu.getItem(2).setVisible(true);
+                menu.getItem(3).setVisible(true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, devolucionFragment).commit();
+                break;
+            }
+            case 1: {
+                getSupportActionBar().setTitle(R.string.linea_title);
+                fab.setVisibility(View.VISIBLE);
+                menu.getItem(0).setVisible(true);
+                menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_monochrome_photos_white_24dp));
+                menu.getItem(2).setVisible(false);
+                menu.getItem(3).setVisible(false);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, lineaFragment).commit();
+                break;
+            }
+            case 2: {
+                getSupportActionBar().setTitle(R.string.devol_obs);
+                fab.setVisibility(View.VISIBLE);
+                menu.getItem(0).setVisible(false);
+                menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_delete_white_24dp));
+                menu.getItem(2).setVisible(false);
+                menu.getItem(3).setVisible(false);
+                if(obsFragment==null) {
+                    obsFragment = ObsFragment.newInstance(null);
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, obsFragment).commit();
+                break;
+            }
+            case 3: {
+                getSupportActionBar().setTitle(R.string.devol_adj);
+                fab.setVisibility(View.GONE);
+                menu.getItem(0).setVisible(false);
+                menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_photo_camera_white_24dp));
+                menu.getItem(2).setVisible(false);
+                menu.getItem(3).setVisible(false);
+                if(adjuntoFragment==null){
+                    adjuntoFragment=AdjuntoFragment.newInstance(null);
+                }
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, adjuntoFragment).commit();
+                break;
+            }
+            default:{
+                break;
+            }
         }
-        else{
-            menu.getItem(1).setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp));
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, devolucionFragment).commit();
-            actualFragment=0;
-        }
+        actualFragment=num;
+
     }
 
     /**
@@ -344,11 +459,17 @@ public class DevolucionActivity extends AppCompatActivity {
                 l.enviarDevolucion();
             }
         }
-        else{
+        else if(actualFragment==1){
             if(lineaFragment.guardar()){
                 Utilidades.crearSnackBar(this.coordinatorLayout,getResources().getString(R.string.linea_guardada));
-                cambiarFragment();
+                cambiarFragment(0);
                 devolucionFragment.refresh();
+            }
+        }
+        else if(actualFragment==2){
+            if(obsFragment.guardar()){
+                Utilidades.crearSnackBar(this.coordinatorLayout,getResources().getString(R.string.devol_obs_guardada));
+                cambiarFragment(0);
             }
         }
 
@@ -378,7 +499,7 @@ public class DevolucionActivity extends AppCompatActivity {
      */
     public void abrirLinea(Bundle bundle){
         lineaFragment=LineaFragment.newInstance(bundle);
-        cambiarFragment();
+        cambiarFragment(1);
     }
 
     /**
@@ -417,6 +538,32 @@ public class DevolucionActivity extends AppCompatActivity {
             lineaFragment.actualizarLinea(codigo,articulo.getNombre(),articulo.getUmv(),lote,caducidad);
 
         }
+    }
+
+    public void hacerFoto(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            // Callback onRequestPermissionsResult interceptado na Activity MainActivity
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA}, REQUEST_IMAGE_CAPTURE);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
+        }
+        else {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+
+    }
+
+    public void ponerCambioObservacion(){
+        this.cambio_obs=true;
+    }
+
+    public boolean hayCambioObservcion(){
+        return this.cambio_obs;
     }
 
 

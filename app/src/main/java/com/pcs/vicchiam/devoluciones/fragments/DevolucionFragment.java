@@ -129,7 +129,7 @@ public class DevolucionFragment extends Fragment {
      */
     public void perderCambios(){
         Devolucion nueva=leerDevolucion();
-        if(Utilidades.devolucion.tieneCambios(nueva)){
+        if(Utilidades.devolucion.tieneCambios(nueva) || devolucionActivity.hayCambioObservcion()){
             Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.descartar_cambios),Utilidades.TIPO_ADVERTENCIA_SI_NO, new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

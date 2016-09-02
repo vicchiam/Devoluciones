@@ -6,7 +6,7 @@
     <item
         android:id="@+id/menu_nuevo"
         android:icon="@drawable/ic_add_white_24dp"
-        android:title="@string/guardar"
+        android:title="@string/devol_guardar"
         app:showAsAction="always"/>
 
 </menu>

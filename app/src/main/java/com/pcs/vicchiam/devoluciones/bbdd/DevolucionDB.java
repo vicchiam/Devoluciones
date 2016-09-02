@@ -228,7 +228,6 @@ public class DevolucionDB extends SQLiteOpenHelper{
         ContentValues cv=new ContentValues();
         cv.put("id_servidor",id_servidor);
         db.update(TABLE_NAME_DEVOLUCION,cv,"id="+id,null);
-        db.close();
     }
 
     /*
@@ -251,6 +250,13 @@ public class DevolucionDB extends SQLiteOpenHelper{
     public void eliminarDevolucion(long id){
         SQLiteDatabase db=this.getWritableDatabase();
         db.delete(TABLE_NAME_DEVOLUCION,"id="+id,null);
+    }
+
+    public void agregarObservacion(String obs, long id){
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+        cv.put("observacion",obs);
+        db.update(TABLE_NAME_DEVOLUCION,cv,"id="+id,null);
     }
 
     /**

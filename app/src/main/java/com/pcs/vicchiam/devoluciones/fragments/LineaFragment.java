@@ -104,7 +104,8 @@ public class LineaFragment extends Fragment {
                 final int year = c.get(Calendar.YEAR);
                 final int month = c.get(Calendar.MONTH);
                 final int day = c.get(Calendar.DAY_OF_MONTH);
-                new DatePickerDialog(devolucionActivity, myDateListener, year+2, month, day).show();
+                new DatePickerDialog(devolucionActivity, android.R.style.Theme_DeviceDefault_Dialog_MinWidth ,myDateListener, year+2, month, day).show();
+
             }
         });
         textAccion=(TextView)view.findViewById(R.id.texto_accion_art);
@@ -136,7 +137,7 @@ public class LineaFragment extends Fragment {
         layoutMotivo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(devolucionActivity)
+                new AlertDialog.Builder(devolucionActivity,android.R.style.Theme_DeviceDefault_Dialog_MinWidth)
                         .setTitle(getResources().getString(R.string.linea_titulo_motivo))
                         .setMessage(getResources().getString(R.string.linea_pregunta_motivo))
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -239,12 +240,12 @@ public class LineaFragment extends Fragment {
             Utilidades.Alerts(devolucionActivity,null,getResources().getString(R.string.descartar_cambios),Utilidades.TIPO_ADVERTENCIA_SI_NO, new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    devolucionActivity.cambiarFragment();
+                    devolucionActivity.cambiarFragment(0);
                 }
             });
         }
         else {
-            devolucionActivity.cambiarFragment();
+            devolucionActivity.cambiarFragment(0);
         }
     }
 

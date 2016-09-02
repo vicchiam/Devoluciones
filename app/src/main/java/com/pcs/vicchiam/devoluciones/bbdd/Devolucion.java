@@ -214,6 +214,12 @@ public class Devolucion {
         db.eliminarDevolucion(id);
     }
 
+    public void agregarObservacion(DevolucionDB db, String observacion){
+        if(this.id>0) {
+            db.agregarObservacion(this.observacion, this.id);
+        }
+    }
+
     @Override
     public String toString() {
         return "Devolucion{" +

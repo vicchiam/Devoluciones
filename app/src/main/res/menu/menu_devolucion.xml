@@ -6,15 +6,26 @@
 
     <item
         android:id="@+id/menu_search_devol"
-        android:title="@string/buscar"
+        android:title="@string/devol_buscar"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/menu_nuevo_devol"
         android:icon="@drawable/ic_add_white_24dp"
-        android:title="@string/guardar"
+        android:title="@string/devol_guardar"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/menu_obs_devol"
+        android:icon="@drawable/ic_chat_bubble_white_24dp"
+        android:title="@string/devol_observacion"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_adj_devol"
+        android:icon="@drawable/ic_attachment_white_24dp"
+        android:title="@string/devol_adjunto"
+        app:showAsAction="ifRoom"/>
 
 </menu>

@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +29,7 @@ import com.pcs.vicchiam.devoluciones.bbdd.Linea;
 import com.pcs.vicchiam.devoluciones.fragments.DevolucionFragment;
 import com.pcs.vicchiam.devoluciones.fragments.LineaFragment;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,13 +92,16 @@ public class Utilidades {
      */
     public static void Alerts(Activity activity, String titulo, String mensaje, int tipo, DialogInterface.OnClickListener onClickListener){
         String title=titulo;
-        if(titulo==null && (tipo==TIPO_ADVERTENCIA_NEUTRAL || tipo==TIPO_ADVERTENCIA_CONFIGURACION)){
+        /*if(titulo==null && (tipo==TIPO_ADVERTENCIA_NEUTRAL || tipo==TIPO_ADVERTENCIA_CONFIGURACION)){
+            title=activity.getResources().getString(R.string.advertencia);
+        }*/
+        if(titulo==null){
             title=activity.getResources().getString(R.string.advertencia);
         }
 
         switch (tipo){
             case TIPO_ADVERTENCIA_NEUTRAL:{
-                new AlertDialog.Builder(activity)
+                new AlertDialog.Builder(activity,android.R.style.Theme_DeviceDefault_Dialog_MinWidth)
                         .setTitle(title)
                         .setMessage(mensaje)
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -107,7 +115,7 @@ public class Utilidades {
                 break;
             }
             case TIPO_ADVERTENCIA_CONFIGURACION:{
-                new AlertDialog.Builder(activity)
+                new AlertDialog.Builder(activity,android.R.style.Theme_DeviceDefault_Dialog_MinWidth)
                         .setTitle(title)
                         .setMessage(mensaje)
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -122,7 +130,7 @@ public class Utilidades {
                 break;
             }
             case TIPO_ADVERTENCIA_SI_NO:{
-                new AlertDialog.Builder(activity)
+                new AlertDialog.Builder(activity,android.R.style.Theme_DeviceDefault_Dialog_MinWidth)
                         .setTitle(title)
                         .setMessage(mensaje)
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -282,6 +290,20 @@ public class Utilidades {
         SimpleDateFormat f=new SimpleDateFormat("yyyy-MM-dd");
         Date d=new Date();
         return f.format(d);
+    }
+
+    public static Uri getImageUri(Context context, Bitmap img) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), img, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public static String getRealPathFromURI(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 
 }
